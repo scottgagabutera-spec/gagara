@@ -206,7 +206,7 @@ export default function GagaraHome() {
         .hero-tag-line { width: 24px; height: 1px; background: var(--indigo-l); flex-shrink: 0; }
         .hero-h1 {
           font-family: 'Fraunces', serif;
-          font-size: clamp(56px, 8.5vw, 120px);
+          font-size: clamp(44px, 5.5vw, 72px);
           font-weight: 300;
           line-height: 0.92;
           letter-spacing: -3px;
@@ -276,7 +276,7 @@ export default function GagaraHome() {
         }
         .sec-h2 {
           font-family: 'Fraunces', serif;
-          font-size: clamp(38px, 4.5vw, 60px);
+          font-size: clamp(32px, 3.5vw, 48px);
           font-weight: 300; line-height: 0.96;
           letter-spacing: -1.8px; color: var(--text-primary);
           margin-bottom: 16px;
@@ -436,12 +436,12 @@ export default function GagaraHome() {
         /* Vault SVG container — FIXED SIZE, no animation on load */
         .vault-fig {
           position: relative;
-          width: 132px; height: 132px;
+          width: 120px !important; height: 120px !important; flex-shrink: 0; overflow: hidden; min-width: 120px; min-height: 120px;
           flex-shrink: 0;
         }
         .vault-price-tag {
           position: absolute;
-          top: -16px; left: 50%; transform: translateX(-50%);
+          top: -14px; left: 50%; transform: translateX(-50%);
           background: var(--surface3);
           border: 0.5px solid var(--border-md);
           border-radius: var(--r-sm);
@@ -703,7 +703,7 @@ export default function GagaraHome() {
         }
         .cb-h {
           font-family: 'Fraunces', serif;
-          font-size: clamp(36px, 4.8vw, 64px);
+          font-size: clamp(32px, 3.5vw, 48px);
           font-weight: 300; line-height: 0.96;
           letter-spacing: -2px; color: var(--text-primary);
           max-width: 720px; margin: 0 auto 20px;
@@ -865,7 +865,7 @@ export default function GagaraHome() {
           Programmable escrow on Interledger Open Payments
         </div>
         <h1 className="hero-h1">
-          Work runs on trust.<br /><em>Gagara makes it certain.</em>
+          Work runs on trust.<br /><em>Gagara makes it certain</em>
         </h1>
         <div className="hero-rule" aria-hidden="true" />
         <div className="hero-body">
@@ -959,47 +959,47 @@ export default function GagaraHome() {
                   <div className={`vault-price-tag ${released ? 'released' : ''}`}>
                     $800.00
                   </div>
-                  <svg viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    style={{width:'132px', height:'132px', display:'block'}}
+                  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style={{width:'120px', height:'120px', display:'block', flexShrink:0}}
                     aria-label="Vault" role="img">
-                    <circle cx="66" cy="66" r="62"
+                    <circle cx="60" cy="60" r="56"
                       fill="none"
                       stroke={released ? 'rgba(43,168,106,0.1)' : 'rgba(84,72,228,0.07)'}
                       strokeWidth="0.5" style={{transition:'stroke 0.6s'}}/>
-                    <rect x="20" y="34" width="92" height="68" rx="9"
+                    <rect x="18" y="30" width="84" height="62" rx="8"
                       fill="var(--surface3)"
                       stroke={released ? 'rgba(43,168,106,0.45)' : funded ? 'rgba(84,72,228,0.45)' : 'rgba(238,238,248,0.07)'}
                       strokeWidth="0.75" style={{transition:'stroke 0.5s'}}/>
-                    <rect x="38" y="48" width="56" height="40" rx="6"
+                    <rect x="34" y="44" width="52" height="36" rx="5"
                       fill="var(--surface4)"
                       stroke={released ? 'rgba(43,168,106,0.25)' : funded ? 'rgba(84,72,228,0.25)' : 'rgba(238,238,248,0.05)'}
                       strokeWidth="0.5" style={{transition:'stroke 0.5s'}}/>
-                    {[[24,42],[108,42],[24,96],[108,96]].map(([cx,cy],i) => (
+                    {[[22,38],[100,38],[22,90],[100,90]].map(([cx,cy],i) => (
                       <circle key={i} cx={cx} cy={cy} r="2.5"
                         fill="var(--surface4)" stroke="rgba(238,238,248,0.05)" strokeWidth="0.5"/>
                     ))}
-                    <circle cx="66" cy="68" r="13"
+                    <circle cx="60" cy="62" r="12"
                       fill={released ? 'rgba(43,168,106,0.08)' : 'rgba(84,72,228,0.07)'}
                       stroke={released ? '#2BA86A' : '#5448E4'}
                       strokeWidth="0.75" style={{transition:'all 0.5s'}}/>
                     {!released ? (
                       <>
-                        <rect x="61.5" y="65" width="9" height="7" rx="1.5"
+                        <rect x="55.5" y="59" width="9" height="7" rx="1.5"
                           fill={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'}
                           style={{transition:'fill 0.4s'}}/>
-                        <path d="M63.5 65v-3a2.5 2.5 0 015 0v3"
+                        <path d="M57.5 59v-3a2.5 2.5 0 015 0v3"
                           stroke={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'}
                           strokeWidth="1.2" strokeLinecap="round"
                           style={{transition:'stroke 0.4s'}}/>
                       </>
                     ) : (
-                      <path d="M61.5 68l2.5 2.5L71 63"
+                      <path d="M55.5 62l2.5 2.5L65 57"
                         stroke="#2BA86A" strokeWidth="1.4"
                         strokeLinecap="round" strokeLinejoin="round"/>
                     )}
-                    <rect x="63" y="88" width="6" height="9" rx="3"
+                    <rect x="57" y="82" width="6" height="8" rx="3"
                       fill="rgba(238,238,248,0.04)" stroke="rgba(238,238,248,0.05)" strokeWidth="0.5"/>
-                    <text x="66" y="116" textAnchor="middle"
+                    <text x="60" y="108" textAnchor="middle"
                       fill="rgba(84,72,228,0.3)"
                       fontSize="6" fontFamily="IBM Plex Mono, monospace"
                       letterSpacing="2.5">GAGARA</text>
@@ -1218,7 +1218,7 @@ export default function GagaraHome() {
               <p className="cb-p">
                 Lock funds. Confirm the work. Release with certainty.
                 For freelancers in Manila, contractors in Lagos,
-                suppliers in London — and everyone in between.
+                suppliers in London and everyone in between.
               </p>
               <div className="cb-btns">
                 <a href="/get-started" className="btn-primary">Create your first deal</a>
