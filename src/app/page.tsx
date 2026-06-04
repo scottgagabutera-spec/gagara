@@ -4,1223 +4,1290 @@ import { useState, useEffect } from 'react';
 
 export default function GagaraHome() {
   const [phase, setPhase] = useState(0);
-  // 0=linked, 1=funded, 2=working, 3=confirmed, 4=released
-  // auto-cycle the vault demo
+
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 1800),
-      setTimeout(() => setPhase(2), 3600),
-      setTimeout(() => setPhase(3), 5400),
-      setTimeout(() => setPhase(4), 7000),
-      setTimeout(() => setPhase(0), 10000),
-    ];
+    const cycle = () => {
+      const t = [
+        setTimeout(() => setPhase(1), 2000),
+        setTimeout(() => setPhase(2), 4000),
+        setTimeout(() => setPhase(3), 6000),
+        setTimeout(() => setPhase(4), 8000),
+        setTimeout(() => { setPhase(0); }, 11000),
+      ];
+      return t;
+    };
+    const timers = cycle();
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  // restart cycle when it resets
   useEffect(() => {
     if (phase !== 0) return;
-    const timers = [
-      setTimeout(() => setPhase(1), 1800),
-      setTimeout(() => setPhase(2), 3600),
-      setTimeout(() => setPhase(3), 5400),
-      setTimeout(() => setPhase(4), 7000),
-      setTimeout(() => setPhase(0), 10000),
+    const t = [
+      setTimeout(() => setPhase(1), 2000),
+      setTimeout(() => setPhase(2), 4000),
+      setTimeout(() => setPhase(3), 6000),
+      setTimeout(() => setPhase(4), 8000),
+      setTimeout(() => { setPhase(0); }, 11000),
     ];
-    return () => timers.forEach(clearTimeout);
+    return () => t.forEach(clearTimeout);
   }, [phase]);
 
-  const released = phase === 4;
-  const confirmed = phase >= 3;
-  const working = phase >= 2;
-  const funded = phase >= 1;
+  const funded   = phase >= 1;
+  const working  = phase >= 2;
+  const confirmed= phase >= 3;
+  const released = phase >= 4;
+
+  const auditLog = [
+    { t: '09:12:04', e: 'Deal created',                   a: '@gaga'           },
+    { t: '09:15:22', e: 'Deal linked — The Link closed',  a: '@client accepted' },
+    ...(funded    ? [{ t: '09:23:41', e: '$800.00 deposited to vault',       a: '@gaga funded'    }] : []),
+    ...(working   ? [{ t: '10:44:08', e: 'Milestone 1 marked complete',      a: '@client'         }] : []),
+    ...(confirmed ? [{ t: '11:02:15', e: 'Completion confirmed',             a: '@gaga'           }] : []),
+    ...(released  ? [{ t: '11:02:16', e: '$800.00 released via Interledger', a: 'instant transfer'}] : []),
+  ];
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Figtree:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --black:    #06060A;
-          --obsidian: #09090F;
-          --surface:  #0E0E18;
-          --surface2: #131320;
-          --surface3: #1A1A2E;
-          --indigo:   #5B4FE8;
-          --indigo-l: #7B70F0;
-          --indigo-d: rgba(91,79,232,0.12);
-          --gold:     #C9A84C;
-          --gold-d:   rgba(201,168,76,0.07);
-          --green:    #3DBA78;
-          --green-d:  rgba(61,186,120,0.1);
-          --white:    #EFEFF5;
-          --muted:    rgba(239,239,245,0.4);
-          --faint:    rgba(239,239,245,0.08);
-          --border:   rgba(255,255,255,0.055);
-          --border2:  rgba(255,255,255,0.09);
+          --black:     #050508;
+          --void:      #080810;
+          --surface:   #0C0C16;
+          --surface2:  #10101C;
+          --surface3:  #161628;
+          --surface4:  #1E1E32;
+          --indigo:    #5448E4;
+          --indigo-l:  #7268ED;
+          --indigo-dim: rgba(84,72,228,0.1);
+          --indigo-glow: rgba(84,72,228,0.06);
+          --gold:      #BFA060;
+          --gold-dim:  rgba(191,160,96,0.06);
+          --green:     #2EAD6E;
+          --green-dim: rgba(46,173,110,0.08);
+          --white:     #EEEEF6;
+          --white-60:  rgba(238,238,246,0.6);
+          --white-40:  rgba(238,238,246,0.4);
+          --white-20:  rgba(238,238,246,0.2);
+          --white-08:  rgba(238,238,246,0.08);
+          --white-04:  rgba(238,238,246,0.04);
+          --border:    rgba(238,238,246,0.06);
+          --border-md: rgba(238,238,246,0.1);
+          --radius-sm: 8px;
+          --radius-md: 12px;
+          --radius-lg: 16px;
+          --radius-xl: 24px;
         }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
         body {
           background: var(--black);
           color: var(--white);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Figtree', sans-serif;
           -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
           overflow-x: hidden;
+          line-height: 1;
         }
-        ::selection { background: rgba(91,79,232,0.28); color: var(--white); }
 
-        /* NOISE */
+        ::selection { background: rgba(84,72,228,0.25); color: var(--white); }
+
+        /* ─── TEXTURE ─── */
         body::before {
           content: '';
           position: fixed; inset: 0; z-index: 0; pointer-events: none;
-          opacity: 0.022;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          background-size: 180px;
+          opacity: 0.018;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+          background-size: 256px;
         }
 
-        /* GRID */
-        .g-grid {
+        /* ─── GRID ─── */
+        .bg-grid {
           position: fixed; inset: 0; z-index: 0; pointer-events: none;
           background-image:
-            linear-gradient(rgba(91,79,232,0.022) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(91,79,232,0.022) 1px, transparent 1px);
-          background-size: 72px 72px;
+            linear-gradient(rgba(84,72,228,0.018) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(84,72,228,0.018) 1px, transparent 1px);
+          background-size: 80px 80px;
         }
 
-        /* GLOWS */
-        .glow-a {
-          position: fixed; z-index: 0; pointer-events: none;
-          width: 900px; height: 900px; border-radius: 50%;
-          top: -400px; right: -350px;
-          background: radial-gradient(circle, rgba(91,79,232,0.055) 0%, transparent 65%);
+        /* ─── RADIAL GLOWS ─── */
+        .glow-1 {
+          position: fixed; pointer-events: none; z-index: 0;
+          width: 1000px; height: 1000px; border-radius: 50%;
+          top: -500px; right: -400px;
+          background: radial-gradient(circle, rgba(84,72,228,0.045) 0%, transparent 60%);
         }
-        .glow-b {
-          position: fixed; z-index: 0; pointer-events: none;
-          width: 700px; height: 700px; border-radius: 50%;
-          bottom: -300px; left: -250px;
-          background: radial-gradient(circle, rgba(201,168,76,0.035) 0%, transparent 65%);
+        .glow-2 {
+          position: fixed; pointer-events: none; z-index: 0;
+          width: 800px; height: 800px; border-radius: 50%;
+          bottom: -400px; left: -300px;
+          background: radial-gradient(circle, rgba(191,160,96,0.03) 0%, transparent 60%);
         }
 
-        /* NAV */
+        /* ─── NAV ─── */
         .nav {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+          position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+          height: 64px;
           display: flex; align-items: center; justify-content: space-between;
-          padding: 0 60px; height: 68px;
-          background: rgba(6,6,10,0.8);
-          backdrop-filter: blur(40px) saturate(1.5);
+          padding: 0 48px;
+          background: rgba(5,5,8,0.85);
+          backdrop-filter: blur(48px) saturate(1.6);
           border-bottom: 0.5px solid var(--border);
         }
         .nav-logo {
-          display: flex; align-items: center; gap: 11px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 17px; font-weight: 500;
-          letter-spacing: -0.3px; color: var(--white);
-          text-decoration: none;
+          display: flex; align-items: center; gap: 10px;
+          font-family: 'Figtree', sans-serif;
+          font-size: 16px; font-weight: 600;
+          letter-spacing: -0.2px; color: var(--white);
+          text-decoration: none; flex-shrink: 0;
         }
-        .nav-center {
-          display: flex; gap: 44px;
+        .nav-links {
+          display: flex; gap: 40px;
           position: absolute; left: 50%; transform: translateX(-50%);
         }
-        .nav-center a {
-          font-size: 13px; font-weight: 300; color: var(--muted);
-          text-decoration: none; letter-spacing: 0.01em;
-          transition: color 0.15s;
+        .nav-links a {
+          font-size: 13px; font-weight: 400;
+          color: var(--white-40); text-decoration: none;
+          letter-spacing: 0.01em; transition: color 0.15s;
+          white-space: nowrap;
         }
-        .nav-center a:hover { color: var(--white); }
-        .nav-right {
-          display: flex; gap: 12px; align-items: center;
+        .nav-links a:hover { color: var(--white); }
+        .nav-actions { display: flex; gap: 8px; align-items: center; }
+        .nav-signin {
+          font-size: 13px; font-weight: 400;
+          color: var(--white-60); background: none; border: none;
+          padding: 8px 16px; cursor: pointer; border-radius: var(--radius-sm);
+          transition: color 0.15s, background 0.15s;
+          text-decoration: none; display: inline-block;
         }
-        .btn-primary {
-          font-family: 'DM Sans', sans-serif;
+        .nav-signin:hover { color: var(--white); background: var(--white-04); }
+        .nav-cta {
           font-size: 13px; font-weight: 500;
           background: var(--indigo);
           color: #fff; border: none;
-          padding: 9px 22px; border-radius: 8px;
+          padding: 9px 20px; border-radius: var(--radius-sm);
           cursor: pointer; letter-spacing: -0.1px;
-          transition: opacity 0.15s;
+          transition: background 0.15s, transform 0.1s;
           text-decoration: none; display: inline-block;
         }
-        .btn-primary:hover { opacity: 0.85; }
-        .btn-ghost {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px; font-weight: 300;
-          color: var(--muted); background: none; border: none;
-          cursor: pointer; padding: 9px 0;
-          transition: color 0.15s; text-decoration: none;
-        }
-        .btn-ghost:hover { color: var(--white); }
+        .nav-cta:hover { background: var(--indigo-l); }
+        .nav-cta:active { transform: scale(0.98); }
 
-        /* HERO */
+        /* ─── HERO ─── */
         .hero {
-          min-height: 100vh;
-          display: flex; flex-direction: column;
-          justify-content: center;
-          padding: 130px 60px 80px;
           position: relative; z-index: 1;
-          max-width: 1300px; margin: 0 auto;
+          min-height: 100svh;
+          display: flex; flex-direction: column; justify-content: center;
+          padding: 96px 48px 80px;
+          max-width: 1280px; margin: 0 auto;
         }
-        .hero-eyebrow {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.2em;
-          text-transform: uppercase; color: var(--indigo-l);
-          margin-bottom: 40px;
-          display: flex; align-items: center; gap: 14px;
-          opacity: 0; animation: rise 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s forwards;
+        .hero-label {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; font-weight: 400;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--indigo-l); margin-bottom: 40px;
+          display: flex; align-items: center; gap: 12px;
+          opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s forwards;
         }
-        .hero-eyebrow::before {
-          content: ''; width: 28px; height: 0.5px; background: var(--indigo-l); flex-shrink: 0;
+        .hero-label-line {
+          width: 24px; height: 1px; background: var(--indigo-l); flex-shrink: 0;
         }
         .hero-h1 {
-          font-family: 'Instrument Serif', serif;
-          font-size: clamp(56px, 7.5vw, 112px);
-          font-weight: 400; line-height: 0.92;
-          letter-spacing: -2.5px; color: var(--white);
-          opacity: 0; animation: rise 1s cubic-bezier(0.16,1,0.3,1) 0.25s forwards;
+          font-family: 'Fraunces', serif;
+          font-size: clamp(52px, 8vw, 120px);
+          font-weight: 300;
+          line-height: 0.9;
+          letter-spacing: -3px;
+          color: var(--white);
+          margin-bottom: 0;
+          opacity: 0; animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
         }
-        .hero-h1 em { font-style: italic; color: var(--indigo-l); }
-        .hero-rule {
-          width: 100%; height: 0.5px;
-          background: linear-gradient(90deg, var(--indigo), rgba(91,79,232,0.1), transparent);
-          margin: 52px 0;
-          opacity: 0; animation: rise 0.8s ease 0.5s forwards;
+        .hero-h1 em {
+          font-style: italic;
+          font-weight: 300;
+          color: var(--indigo-l);
         }
-        .hero-lower {
+        .hero-divider {
+          width: 100%; height: 0.5px; margin: 48px 0;
+          background: linear-gradient(90deg, var(--indigo), rgba(84,72,228,0.08), transparent);
+          opacity: 0; animation: fadeUp 0.6s ease 0.45s forwards;
+        }
+        .hero-body {
           display: grid; grid-template-columns: 1fr 1fr;
-          gap: 80px; align-items: end;
-          opacity: 0; animation: rise 0.8s ease 0.65s forwards;
+          gap: 64px; align-items: end;
+          opacity: 0; animation: fadeUp 0.7s ease 0.55s forwards;
         }
         .hero-desc {
-          font-size: 17px; font-weight: 300;
-          color: var(--muted); line-height: 1.75;
-          max-width: 440px;
+          font-size: 16px; font-weight: 300;
+          color: var(--white-60); line-height: 1.75;
+          max-width: 420px;
         }
         .hero-desc strong { color: var(--white); font-weight: 500; }
-        .hero-right {
-          display: flex; flex-direction: column;
-          align-items: flex-end; gap: 32px;
-        }
-        .hero-stats {
-          display: flex; gap: 48px;
-        }
-        .stat-num {
-          font-family: 'Instrument Serif', serif;
-          font-size: 40px; color: var(--white);
-          letter-spacing: -1.5px; line-height: 1;
+        .hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 32px; }
+        .hero-metrics { display: flex; gap: 40px; }
+        .metric-val {
+          font-family: 'Fraunces', serif;
+          font-size: 38px; font-weight: 300;
+          letter-spacing: -1.5px; color: var(--white); line-height: 1;
           margin-bottom: 6px;
         }
-        .stat-num span { color: var(--indigo-l); }
-        .stat-label {
-          font-size: 12px; color: var(--muted);
-          font-weight: 300; line-height: 1.5;
+        .metric-val span { color: var(--indigo-l); }
+        .metric-label {
+          font-size: 11px; font-weight: 300;
+          color: var(--white-40); line-height: 1.5;
         }
-        .hero-cta {
-          display: flex; gap: 16px; align-items: center;
+        .hero-btns { display: flex; gap: 12px; align-items: center; }
+        .btn-lg {
+          font-family: 'Figtree', sans-serif;
+          font-size: 14px; font-weight: 500;
+          background: var(--indigo);
+          color: #fff; border: none;
+          padding: 12px 28px; border-radius: var(--radius-sm);
+          cursor: pointer; letter-spacing: -0.1px;
+          transition: background 0.15s, transform 0.1s;
+          text-decoration: none; display: inline-block;
+        }
+        .btn-lg:hover { background: var(--indigo-l); }
+        .btn-lg:active { transform: scale(0.98); }
+        .btn-text {
+          font-size: 14px; font-weight: 400;
+          color: var(--white-40); background: none; border: none;
+          cursor: pointer; padding: 12px 0;
+          transition: color 0.15s; text-decoration: none;
+          display: inline-block;
+        }
+        .btn-text:hover { color: var(--white); }
+
+        /* ─── PAGE WRAPPER ─── */
+        .page-max {
+          position: relative; z-index: 1;
+          max-width: 1280px; margin: 0 auto;
         }
 
-        /* SECTION WRAPPER */
-        .section {
-          position: relative; z-index: 1;
-          max-width: 1300px; margin: 0 auto;
-          padding: 100px 60px;
-        }
-        .eyebrow {
-          font-family: 'DM Mono', monospace;
+        /* ─── SECTION HEADER ─── */
+        .s-label {
+          font-family: 'IBM Plex Mono', monospace;
           font-size: 10px; letter-spacing: 0.2em;
           text-transform: uppercase; color: var(--indigo-l);
-          margin-bottom: 20px;
+          margin-bottom: 16px;
         }
         .s-h2 {
-          font-family: 'Instrument Serif', serif;
-          font-size: clamp(38px, 4.2vw, 62px);
-          font-weight: 400; line-height: 1;
-          letter-spacing: -1.8px; color: var(--white);
-          margin-bottom: 18px;
+          font-family: 'Fraunces', serif;
+          font-size: clamp(36px, 4.5vw, 64px);
+          font-weight: 300; line-height: 0.95;
+          letter-spacing: -2px; color: var(--white);
+          margin-bottom: 16px;
         }
         .s-h2 em { font-style: italic; color: var(--indigo-l); }
-        .s-sub {
-          font-size: 15px; color: var(--muted);
-          font-weight: 300; line-height: 1.75;
-          max-width: 500px; margin-bottom: 60px;
+        .s-body {
+          font-size: 15px; font-weight: 300;
+          color: var(--white-40); line-height: 1.75;
+          max-width: 480px; margin-bottom: 56px;
         }
-        .fw-line {
+
+        /* ─── DIVIDER ─── */
+        .divider {
           height: 0.5px; background: var(--border);
           position: relative; z-index: 1;
         }
 
-        /* ═══════════════════════════════════════
-           VAULT ILLUSTRATION SECTION
-        ════════════════════════════════════════ */
-        .vault-section {
-          position: relative; z-index: 1;
-          padding: 0 60px 120px;
-          max-width: 1300px; margin: 0 auto;
+        /* ══════════════════════════════════════
+           VAULT SECTION
+        ══════════════════════════════════════ */
+        .vault-wrap {
+          padding: 0 48px 112px;
         }
-        .vault-eyebrow {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.2em;
-          text-transform: uppercase; color: var(--muted);
+        .vault-header {
+          display: flex; align-items: center; justify-content: space-between;
           margin-bottom: 40px;
-          display: flex; align-items: center; gap: 14px;
         }
-        .vault-eyebrow::before {
-          content: ''; width: 28px; height: 0.5px; background: var(--muted); flex-shrink: 0;
+        .vault-header-label {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; letter-spacing: 0.2em;
+          text-transform: uppercase; color: var(--white-40);
+          display: flex; align-items: center; gap: 12px;
+        }
+        .vault-header-label::before {
+          content: ''; width: 24px; height: 0.5px;
+          background: var(--white-40); flex-shrink: 0;
+        }
+        .vault-deal-id {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 12px; color: var(--indigo-l);
+          letter-spacing: 0.06em;
         }
 
-        /* The three-column illustration */
-        .vault-illustration {
+        /* Three-column vault */
+        .vault-cols {
           display: grid;
-          grid-template-columns: 1fr 320px 1fr;
-          gap: 0;
-          align-items: center;
-          background: var(--surface);
-          border: 0.5px solid var(--border2);
-          border-radius: 24px;
+          grid-template-columns: 1fr 280px 1fr;
+          border: 0.5px solid var(--border-md);
+          border-radius: var(--radius-xl);
           overflow: hidden;
-          min-height: 460px;
+          background: var(--surface);
+          min-height: 420px;
         }
 
-        /* PARTY PANELS */
-        .party-panel {
-          padding: 56px 48px;
+        /* Party columns */
+        .party-col {
+          padding: 48px 40px;
           display: flex; flex-direction: column;
           justify-content: space-between;
-          height: 100%;
           border-right: 0.5px solid var(--border);
-          position: relative;
         }
-        .party-panel.receiver {
+        .party-col.recv {
           border-right: none;
           border-left: 0.5px solid var(--border);
           align-items: flex-end; text-align: right;
         }
 
-        .party-role {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px; letter-spacing: 0.2em;
-          text-transform: uppercase; color: var(--muted);
-          margin-bottom: 20px;
+        .p-role {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.22em;
+          text-transform: uppercase; color: var(--white-20);
+          margin-bottom: 16px;
         }
-        .party-identity {
-          display: flex; align-items: center; gap: 14px;
-          margin-bottom: 32px;
-        }
-        .party-panel.receiver .party-identity {
-          flex-direction: row-reverse;
-        }
-        .avatar {
-          width: 52px; height: 52px; border-radius: 14px;
-          background: var(--surface3);
-          border: 0.5px solid var(--border2);
+        .p-identity { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+        .party-col.recv .p-identity { flex-direction: row-reverse; }
+
+        .p-avatar {
+          width: 44px; height: 44px; border-radius: var(--radius-md);
+          background: var(--surface4);
+          border: 0.5px solid var(--border-md);
           display: flex; align-items: center; justify-content: center;
-          font-size: 18px; font-weight: 500; color: var(--white);
+          font-size: 15px; font-weight: 600; color: var(--white);
           flex-shrink: 0;
         }
-        .party-name {
-          font-size: 18px; font-weight: 500;
-          color: var(--white); letter-spacing: -0.3px;
-          margin-bottom: 4px;
+        .p-name {
+          font-size: 16px; font-weight: 500;
+          color: var(--white); letter-spacing: -0.2px;
+          margin-bottom: 3px;
         }
-        .party-verified {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px; color: var(--green);
+        .p-kyc {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: var(--green);
           display: flex; align-items: center; gap: 5px;
         }
-        .party-panel.receiver .party-verified {
-          justify-content: flex-end;
-        }
+        .party-col.recv .p-kyc { justify-content: flex-end; }
 
-        /* The amount display */
-        .party-amount-wrap {
-          margin-bottom: 24px;
+        .p-amount-section { margin-bottom: 28px; }
+        .p-amount-label {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.16em;
+          text-transform: uppercase; color: var(--white-20);
+          margin-bottom: 8px;
         }
-        .party-label {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.1em;
-          color: var(--muted); margin-bottom: 8px;
-          text-transform: uppercase;
+        .p-amount {
+          font-family: 'Fraunces', serif;
+          font-size: 44px; font-weight: 300;
+          letter-spacing: -2px; line-height: 1;
+          color: var(--white); transition: color 0.5s;
         }
-        .party-amount {
-          font-family: 'Instrument Serif', serif;
-          font-size: 48px; letter-spacing: -2px;
-          line-height: 1; color: var(--white);
-          transition: color 0.6s;
+        .p-amount.amt-pending { color: var(--white-20); font-style: italic; }
+        .p-amount.amt-released { color: var(--green); }
+        .p-state {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; margin-top: 10px;
+          letter-spacing: 0.04em; transition: color 0.4s;
+          color: var(--white-20);
         }
-        .party-amount.pending { color: var(--muted); font-style: italic; }
-        .party-amount.received { color: var(--green); }
+        .p-state.st-locked { color: var(--indigo-l); }
+        .p-state.st-done   { color: var(--green); }
 
-        .party-status {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px; margin-top: 8px;
-          transition: color 0.4s;
-        }
-        .party-status.locked { color: var(--indigo-l); }
-        .party-status.released { color: var(--green); }
-        .party-status.pending-s { color: var(--muted); }
-
-        /* Party "sees" indicator */
-        .party-sees {
+        /* "Seeing" indicator */
+        .p-seeing {
           display: flex; align-items: center; gap: 8px;
-          padding: 10px 16px;
-          background: var(--indigo-d);
-          border: 0.5px solid rgba(91,79,232,0.2);
-          border-radius: 8px;
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--indigo-l);
-          letter-spacing: 0.04em;
+          padding: 10px 14px;
+          background: var(--indigo-dim);
+          border: 0.5px solid rgba(84,72,228,0.2);
+          border-radius: var(--radius-sm);
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.08em;
+          color: var(--indigo-l);
         }
-        .party-panel.receiver .party-sees { flex-direction: row-reverse; }
-        .eye-dot {
-          width: 6px; height: 6px; border-radius: 50%;
-          background: var(--indigo-l);
-          animation: blink 2.5s ease-in-out infinite;
-        }
-        @keyframes blink {
-          0%,100% { opacity: 1; }
-          50% { opacity: 0.3; }
+        .party-col.recv .p-seeing { justify-content: flex-end; }
+        .seeing-pulse {
+          width: 5px; height: 5px; border-radius: 50%;
+          background: var(--indigo-l); flex-shrink: 0;
+          animation: pulse 2.4s ease-in-out infinite;
         }
 
-        /* VAULT CENTER */
+        /* Center vault column */
         .vault-center {
           display: flex; flex-direction: column;
           align-items: center; justify-content: center;
-          padding: 40px 24px; gap: 20px;
-          position: relative; height: 100%;
-        }
-
-        /* The vault SVG container */
-        .vault-graphic {
+          padding: 40px 24px; gap: 16px;
           position: relative;
-          width: 160px; height: 160px;
-          flex-shrink: 0;
         }
 
-        /* Floating amount above vault */
-        .vault-amount-float {
+        /* Horizontal wires */
+        .wire-left, .wire-right {
+          position: absolute; top: 50%; width: 100%;
+          pointer-events: none; z-index: 0; overflow: visible;
+        }
+
+        .vault-id-tag {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: var(--indigo-l);
+          letter-spacing: 0.08em; text-align: center;
+        }
+
+        /* THE VAULT SVG */
+        .vault-svg-wrap {
+          position: relative; width: 148px; height: 148px; flex-shrink: 0;
+        }
+        .vault-float-amount {
           position: absolute;
-          top: -14px; left: 50%; transform: translateX(-50%);
+          top: -18px; left: 50%; transform: translateX(-50%);
           background: var(--surface3);
-          border: 0.5px solid var(--border2);
-          border-radius: 8px;
-          padding: 6px 14px;
-          font-family: 'Instrument Serif', serif;
-          font-size: 22px; color: var(--white);
-          letter-spacing: -0.5px;
-          white-space: nowrap;
-          z-index: 2;
+          border: 0.5px solid var(--border-md);
+          border-radius: var(--radius-sm);
+          padding: 5px 12px;
+          font-family: 'Fraunces', serif;
+          font-size: 18px; font-weight: 300;
+          color: var(--white); letter-spacing: -0.5px;
+          white-space: nowrap; z-index: 2;
           transition: color 0.5s;
         }
-        .vault-amount-float.released-amt { color: var(--green); }
+        .vault-float-amount.fa-released { color: var(--green); }
 
-        /* Connection lines from party to vault */
-        .vault-connectors {
-          position: absolute;
-          top: 0; left: 0; width: 100%; height: 100%;
-          pointer-events: none; z-index: 0;
-        }
-
-        /* Vault status badge */
-        .vault-badge {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.1em;
+        .vault-state-badge {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.12em;
           text-transform: uppercase;
-          padding: 6px 14px; border-radius: 6px;
+          padding: 5px 12px; border-radius: var(--radius-sm);
           transition: all 0.4s;
         }
-        .vault-badge.active {
-          color: var(--green);
-          background: var(--green-d);
-          border: 0.5px solid rgba(61,186,120,0.25);
-        }
-        .vault-badge.locked-b {
+        .vsb-locked {
           color: var(--indigo-l);
-          background: var(--indigo-d);
-          border: 0.5px solid rgba(91,79,232,0.25);
+          background: var(--indigo-dim);
+          border: 0.5px solid rgba(84,72,228,0.22);
+        }
+        .vsb-released {
+          color: var(--green);
+          background: var(--green-dim);
+          border: 0.5px solid rgba(46,173,110,0.22);
         }
 
-        /* Deal ID */
-        .deal-id {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px; color: var(--indigo-l);
-          letter-spacing: 0.06em;
-        }
-
-        /* Gagara label on vault */
-        .gagara-holds {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px; letter-spacing: 0.14em;
+        .vault-caption {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 8px; letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: var(--muted);
-          text-align: center;
-          line-height: 1.5;
+          color: var(--white-20); text-align: center; line-height: 1.6;
         }
 
-        /* AUDIT STRIP */
-        .audit-strip {
+        /* ─── AUDIT LOG STRIP ─── */
+        .audit-log {
           border-top: 0.5px solid var(--border);
-          background: var(--obsidian);
-          padding: 24px 48px;
+          background: var(--void);
+          border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+          padding: 24px 40px;
           display: flex; gap: 0; overflow-x: auto;
+          scrollbar-width: none;
         }
-        .audit-item {
-          display: flex; flex-direction: column; gap: 3px;
-          padding-right: 48px;
-          border-right: 0.5px solid var(--border);
-          margin-right: 48px;
+        .audit-log::-webkit-scrollbar { display: none; }
+        .audit-entry {
           flex-shrink: 0;
-          opacity: 0;
-          animation: fadeUp 0.4s ease forwards;
+          padding-right: 40px; margin-right: 40px;
+          border-right: 0.5px solid var(--border);
+          display: flex; flex-direction: column; gap: 3px;
+          opacity: 0; animation: fadeUp 0.35s ease forwards;
         }
-        .audit-item:last-child { border-right: none; margin-right: 0; }
-        .audit-t {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--muted);
+        .audit-entry:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+        .ae-time {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: var(--white-20); letter-spacing: 0.04em;
         }
-        .audit-e {
-          font-size: 12px; color: var(--white); font-weight: 400;
-        }
-        .audit-a {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--indigo-l);
-        }
-
-        /* CONNECTOR LINES SVG */
-        .connector-svg {
-          position: absolute;
-          top: 50%; left: 0; width: 100%;
-          transform: translateY(-50%);
-          pointer-events: none; z-index: 0;
-          overflow: visible;
+        .ae-event { font-size: 12px; color: var(--white); font-weight: 400; }
+        .ae-actor {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: var(--indigo-l);
         }
 
-        /* ═══════════════════════════════════════
-           HOW A DEAL WORKS — 5 STEPS
-        ════════════════════════════════════════ */
-        .steps-grid {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          position: relative;
+        /* ══════════════════════════════════════
+           DEAL FLOW STEPS
+        ══════════════════════════════════════ */
+        .steps-section {
+          padding: 96px 48px;
         }
-        .steps-grid::before {
+        .steps-row {
+          display: grid; grid-template-columns: repeat(5, 1fr);
+          position: relative; gap: 0;
+        }
+        .steps-row::before {
           content: '';
           position: absolute;
-          top: 31px; left: 31px; right: 31px; height: 0.5px;
-          background: linear-gradient(90deg, transparent, var(--indigo) 15%, var(--indigo) 85%, transparent);
+          top: 30px; left: 30px; right: 30px; height: 0.5px;
+          background: linear-gradient(90deg,
+            transparent,
+            rgba(84,72,228,0.4) 10%,
+            rgba(84,72,228,0.4) 90%,
+            transparent
+          );
           z-index: 0;
         }
-        .step {
+        .step-item {
           display: flex; flex-direction: column;
-          align-items: flex-start;
-          padding-right: 24px;
+          align-items: flex-start; padding-right: 20px;
           position: relative; z-index: 1;
         }
-        .step-node {
-          width: 62px; height: 62px; border-radius: 14px;
+        .step-icon-wrap {
+          width: 60px; height: 60px; border-radius: var(--radius-md);
           background: var(--surface2);
-          border: 0.5px solid var(--border2);
+          border: 0.5px solid var(--border);
           display: flex; align-items: center; justify-content: center;
-          margin-bottom: 22px;
-          color: var(--muted);
+          margin-bottom: 20px; color: var(--white-20);
           transition: all 0.3s;
         }
-        .step.s-active .step-node {
-          background: var(--indigo-d);
-          border-color: rgba(91,79,232,0.4);
+        .step-item.si-active .step-icon-wrap {
+          background: var(--indigo-dim);
+          border-color: rgba(84,72,228,0.35);
           color: var(--indigo-l);
         }
-        .step.s-done .step-node {
-          background: var(--green-d);
-          border-color: rgba(61,186,120,0.3);
+        .step-item.si-done .step-icon-wrap {
+          background: var(--green-dim);
+          border-color: rgba(46,173,110,0.28);
           color: var(--green);
         }
-        .step-n {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--muted);
-          letter-spacing: 0.1em; margin-bottom: 8px;
+        .step-num {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: var(--white-20);
+          letter-spacing: 0.12em; margin-bottom: 7px;
         }
         .step-title {
-          font-size: 14px; font-weight: 500;
+          font-size: 13px; font-weight: 500;
           color: var(--white); margin-bottom: 6px;
+          letter-spacing: -0.1px;
         }
         .step-desc {
-          font-size: 12px; color: var(--muted);
+          font-size: 12px; color: var(--white-40);
           font-weight: 300; line-height: 1.55;
         }
 
-        /* ═══════════════════════════════════════
+        /* ══════════════════════════════════════
            DEAL MODES
-        ════════════════════════════════════════ */
-        .modes {
+        ══════════════════════════════════════ */
+        .modes-section { padding: 96px 48px; }
+        .modes-grid {
           display: grid; grid-template-columns: repeat(3, 1fr);
           gap: 1px; background: var(--border);
           border: 0.5px solid var(--border);
-          border-radius: 20px; overflow: hidden;
+          border-radius: var(--radius-xl); overflow: hidden;
         }
-        .mode {
+        .mode-card {
           background: var(--surface);
-          padding: 52px 44px;
-          position: relative;
+          padding: 48px 40px;
+          position: relative; overflow: hidden;
           transition: background 0.2s;
         }
-        .mode:hover { background: var(--surface2); }
-        .mode::before {
+        .mode-card:hover { background: var(--surface2); }
+        .mode-card::after {
           content: '';
           position: absolute; top: 0; left: 0; right: 0; height: 1px;
-          background: var(--indigo); opacity: 0; transition: opacity 0.2s;
+          background: var(--indigo);
+          opacity: 0; transition: opacity 0.2s;
         }
-        .mode:hover::before { opacity: 1; }
-        .mode-n {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--faint);
-          letter-spacing: 0.1em; margin-bottom: 32px;
+        .mode-card:hover::after { opacity: 1; }
+        .mode-card.enterprise-card::after { background: var(--gold); }
+
+        .mc-num {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: var(--white-08);
+          letter-spacing: 0.12em; margin-bottom: 28px;
         }
-        .mode-icon {
-          width: 52px; height: 52px; border-radius: 13px;
+        .mc-icon {
+          width: 48px; height: 48px; border-radius: var(--radius-md);
           background: var(--surface3);
-          border: 0.5px solid var(--border2);
+          border: 0.5px solid var(--border);
           display: flex; align-items: center; justify-content: center;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
-        .mode-title {
-          font-family: 'Instrument Serif', serif;
-          font-size: 28px; font-weight: 400;
-          color: var(--white); letter-spacing: -0.5px;
-          margin-bottom: 12px;
+        .mc-title {
+          font-family: 'Fraunces', serif;
+          font-size: 26px; font-weight: 300;
+          color: var(--white); letter-spacing: -0.8px;
+          margin-bottom: 10px; line-height: 1;
         }
-        .mode-desc {
-          font-size: 14px; color: var(--muted);
+        .mc-desc {
+          font-size: 13px; color: var(--white-40);
           font-weight: 300; line-height: 1.7;
-          margin-bottom: 28px;
-        }
-        .mode-range {
-          display: inline-flex; align-items: center; gap: 6px;
-          font-family: 'DM Mono', monospace;
-          font-size: 11px; color: var(--gold);
-          background: var(--gold-d);
-          border: 0.5px solid rgba(201,168,76,0.18);
-          padding: 5px 13px; border-radius: 6px;
           margin-bottom: 24px;
         }
-        .mode-list {
+        .mc-range {
+          display: inline-flex; align-items: center;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: var(--gold);
+          background: var(--gold-dim);
+          border: 0.5px solid rgba(191,160,96,0.15);
+          padding: 4px 11px; border-radius: 5px;
+          margin-bottom: 20px; letter-spacing: 0.04em;
+        }
+        .mc-features {
           list-style: none;
-          display: flex; flex-direction: column; gap: 9px;
+          display: flex; flex-direction: column; gap: 8px;
         }
-        .mode-list li {
-          font-size: 13px; color: var(--muted);
+        .mc-features li {
+          font-size: 12px; color: var(--white-40);
           font-weight: 300; line-height: 1.4;
-          display: flex; align-items: flex-start; gap: 10px;
+          display: flex; align-items: flex-start; gap: 9px;
         }
-        .mode-list li::before {
+        .mc-features li::before {
           content: '';
-          width: 4px; height: 4px; border-radius: 50%;
-          background: var(--indigo); flex-shrink: 0; margin-top: 6px;
+          width: 3px; height: 3px; border-radius: 50%;
+          background: var(--indigo-l); flex-shrink: 0; margin-top: 6px;
         }
 
-        /* ═══════════════════════════════════════
+        /* ══════════════════════════════════════
            PAYOUTS
-        ════════════════════════════════════════ */
-        .payout-table {
+        ══════════════════════════════════════ */
+        .payouts-section { padding: 96px 48px; }
+        .payout-tbl {
           border: 0.5px solid var(--border);
-          border-radius: 20px; overflow: hidden;
+          border-radius: var(--radius-xl); overflow: hidden;
         }
-        .pt-header {
+        .pt-head {
           display: grid; grid-template-columns: 1fr auto;
-          padding: 16px 40px;
-          background: rgba(91,79,232,0.05);
+          padding: 14px 36px;
+          background: rgba(84,72,228,0.04);
           border-bottom: 0.5px solid var(--border);
         }
-        .pt-header span {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.12em;
-          text-transform: uppercase; color: var(--faint);
+        .pt-head span {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.14em;
+          text-transform: uppercase; color: var(--white-20);
         }
         .pt-row {
           display: grid; grid-template-columns: 1fr auto;
-          padding: 26px 40px;
+          padding: 24px 36px; gap: 24px;
           border-bottom: 0.5px solid var(--border);
-          align-items: center; gap: 24px;
-          transition: background 0.2s;
+          align-items: center; transition: background 0.15s;
         }
         .pt-row:last-child { border-bottom: none; }
         .pt-row:hover { background: var(--surface2); }
         .pt-method {
-          font-size: 14px; font-weight: 400;
+          font-size: 13px; font-weight: 500;
           color: var(--white); margin-bottom: 3px;
+          letter-spacing: -0.1px;
         }
         .pt-desc {
-          font-size: 12px; color: var(--muted); font-weight: 300;
+          font-size: 12px; color: var(--white-40); font-weight: 300;
         }
         .pt-speed {
-          font-family: 'DM Mono', monospace;
-          font-size: 13px; font-weight: 500;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 12px; font-weight: 500;
           color: var(--green); white-space: nowrap; text-align: right;
         }
-        .pt-speed.slow { color: var(--muted); }
+        .pt-speed.spd-slow { color: var(--white-20); }
 
-        /* ═══════════════════════════════════════
-           CLOSING STATEMENT
-        ════════════════════════════════════════ */
-        .closing {
-          position: relative; z-index: 1;
-          max-width: 1300px; margin: 0 auto;
-          padding: 0 60px 140px;
-        }
-        .closing-box {
+        /* ══════════════════════════════════════
+           CLOSING
+        ══════════════════════════════════════ */
+        .closing-wrap { padding: 0 48px 128px; }
+        .closing-inner {
           background: var(--surface);
-          border: 0.5px solid var(--border2);
-          border-radius: 24px;
-          padding: 100px 80px;
-          text-align: center;
-          position: relative; overflow: hidden;
+          border: 0.5px solid var(--border-md);
+          border-radius: var(--radius-xl);
+          padding: 96px 80px;
+          text-align: center; position: relative; overflow: hidden;
         }
-        .closing-box::before {
+        .closing-inner::before {
           content: '';
           position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-          width: 500px; height: 0.5px;
+          width: 480px; height: 0.5px;
           background: linear-gradient(90deg, transparent, var(--gold), transparent);
         }
-        .closing-box::after {
+        .closing-inner::after {
           content: '';
-          position: absolute; inset: 0;
-          background: radial-gradient(ellipse at 50% 0%, rgba(91,79,232,0.04) 0%, transparent 60%);
-          pointer-events: none;
+          position: absolute; inset: 0; pointer-events: none;
+          background: radial-gradient(ellipse at 50% -20%, rgba(84,72,228,0.04) 0%, transparent 55%);
         }
-        .closing-inner { position: relative; z-index: 1; }
-        .closing-eyebrow {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.2em;
-          text-transform: uppercase; color: var(--gold);
-          margin-bottom: 44px;
+        .ci-content { position: relative; z-index: 1; }
+        .ci-eyebrow {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--gold); margin-bottom: 40px;
           display: flex; align-items: center; justify-content: center; gap: 16px;
         }
-        .closing-eyebrow::before,
-        .closing-eyebrow::after {
-          content: ''; flex: 1; max-width: 60px;
-          height: 0.5px; background: var(--gold); opacity: 0.4;
+        .ci-eyebrow::before, .ci-eyebrow::after {
+          content: ''; flex: 1; max-width: 48px;
+          height: 0.5px; background: var(--gold); opacity: 0.35;
         }
-        .closing-h {
-          font-family: 'Instrument Serif', serif;
-          font-size: clamp(40px, 4.5vw, 68px);
-          font-weight: 400; line-height: 1.02;
-          letter-spacing: -2px; color: var(--white);
-          margin-bottom: 28px;
-          max-width: 780px; margin-left: auto; margin-right: auto;
+        .ci-h {
+          font-family: 'Fraunces', serif;
+          font-size: clamp(38px, 4.8vw, 68px);
+          font-weight: 300; line-height: 0.95;
+          letter-spacing: -2.5px; color: var(--white);
+          max-width: 760px; margin: 0 auto 24px;
         }
-        .closing-h em { font-style: italic; color: var(--indigo-l); }
-        .closing-p {
-          font-size: 16px; color: var(--muted);
+        .ci-h em { font-style: italic; color: var(--indigo-l); }
+        .ci-p {
+          font-size: 15px; color: var(--white-40);
           font-weight: 300; line-height: 1.75;
-          max-width: 520px; margin: 0 auto 56px;
+          max-width: 500px; margin: 0 auto 48px;
         }
-        .closing-cta {
-          display: flex; gap: 16px; justify-content: center; align-items: center;
+        .ci-btns {
+          display: flex; gap: 12px; justify-content: center; align-items: center;
+          margin-bottom: 48px;
         }
-        .closing-badges {
-          display: flex; flex-wrap: wrap;
-          justify-content: center; gap: 8px; margin-top: 52px;
+        .ci-tags {
+          display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
         }
-        .c-badge {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.07em;
-          color: var(--muted);
-          background: rgba(255,255,255,0.025);
-          border: 0.5px solid var(--border2);
-          padding: 6px 14px; border-radius: 6px;
+        .ci-tag {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; letter-spacing: 0.08em;
+          color: var(--white-20);
+          background: var(--white-04);
+          border: 0.5px solid var(--border-md);
+          padding: 5px 12px; border-radius: 5px;
         }
 
-        /* FOOTER */
+        /* ─── FOOTER ─── */
         footer {
           position: relative; z-index: 1;
           border-top: 0.5px solid var(--border);
-          padding: 48px 60px;
-          max-width: 1300px; margin: 0 auto;
+          padding: 40px 48px;
+          max-width: 1280px; margin: 0 auto;
           display: flex; align-items: center; justify-content: space-between;
         }
         .f-logo {
           display: flex; align-items: center; gap: 10px;
-          font-size: 15px; font-weight: 500; color: var(--white);
+          font-size: 15px; font-weight: 600; color: var(--white);
+          letter-spacing: -0.2px;
         }
-        .f-links { display: flex; gap: 28px; list-style: none; }
-        .f-links a {
-          font-size: 13px; color: var(--muted); font-weight: 300;
+        .f-nav { display: flex; gap: 28px; list-style: none; }
+        .f-nav a {
+          font-size: 12px; color: var(--white-40); font-weight: 300;
           text-decoration: none; transition: color 0.15s;
         }
-        .f-links a:hover { color: var(--white); }
+        .f-nav a:hover { color: var(--white); }
         .f-copy {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; color: var(--faint); letter-spacing: 0.06em;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: var(--white-08); letter-spacing: 0.06em;
         }
 
-        /* ANIMATIONS */
-        @keyframes rise {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+        /* ─── KEYFRAMES ─── */
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0);    }
         }
-
-        /* PULSE on wire */
-        @keyframes travel {
-          0% { stroke-dashoffset: 200; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
+        @keyframes pulse {
+          0%,100% { opacity: 1; }
+          50% { opacity: 0.25; }
+        }
+        @keyframes wirePulse {
+          0%   { stroke-dashoffset: 120; opacity: 0; }
+          8%   { opacity: 1; }
+          92%  { opacity: 1; }
           100% { stroke-dashoffset: 0; opacity: 0; }
         }
-        .wire-traveler {
-          stroke-dasharray: 40 160;
-          animation: travel 2.2s ease-in-out infinite;
+        .wire-animated {
+          stroke-dasharray: 30 90;
+          animation: wirePulse 2s linear infinite;
         }
-        .wire-traveler-r {
-          stroke-dasharray: 40 160;
-          animation: travel 2.2s ease-in-out 1.1s infinite;
+        .wire-animated-r {
+          stroke-dasharray: 30 90;
+          animation: wirePulse 2s linear 1s infinite;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 960px) {
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 1024px) {
           .nav { padding: 0 24px; }
-          .nav-center { display: none; }
-          .hero { padding: 120px 24px 60px; }
-          .hero-lower { grid-template-columns: 1fr; gap: 40px; }
+          .nav-links { display: none; }
+          .hero { padding: 88px 24px 64px; }
+          .hero-body { grid-template-columns: 1fr; gap: 40px; }
           .hero-right { align-items: flex-start; }
-          .hero-stats { gap: 28px; }
-          .vault-section { padding: 0 24px 80px; }
-          .vault-illustration { grid-template-columns: 1fr; min-height: auto; }
-          .party-panel { border-right: none; border-bottom: 0.5px solid var(--border); }
-          .party-panel.receiver { border-left: none; border-top: 0.5px solid var(--border); align-items: flex-start; text-align: left; }
-          .party-panel.receiver .party-identity { flex-direction: row; }
-          .party-panel.receiver .party-verified { justify-content: flex-start; }
-          .party-panel.receiver .party-sees { flex-direction: row; }
-          .vault-center { padding: 40px 24px; }
-          .audit-strip { padding: 20px 24px; }
-          .section { padding: 60px 24px; }
-          .steps-grid { grid-template-columns: 1fr; gap: 32px; }
-          .steps-grid::before { display: none; }
-          .modes { grid-template-columns: 1fr; }
-          .closing { padding: 0 24px 80px; }
-          .closing-box { padding: 56px 28px; }
-          .closing-cta { flex-direction: column; }
+          .hero-metrics { gap: 28px; }
+          .vault-wrap { padding: 0 24px 80px; }
+          .vault-cols {
+            grid-template-columns: 1fr;
+            min-height: auto;
+          }
+          .party-col {
+            border-right: none;
+            border-bottom: 0.5px solid var(--border);
+          }
+          .party-col.recv {
+            border-left: none;
+            border-top: 0.5px solid var(--border);
+            align-items: flex-start; text-align: left;
+          }
+          .party-col.recv .p-identity { flex-direction: row; }
+          .party-col.recv .p-kyc { justify-content: flex-start; }
+          .party-col.recv .p-seeing { justify-content: flex-start; }
+          .vault-center { border-top: 0.5px solid var(--border); padding: 48px 24px; }
+          .audit-log { padding: 20px 24px; }
+          .steps-section { padding: 64px 24px; }
+          .steps-row { grid-template-columns: 1fr; gap: 32px; }
+          .steps-row::before { display: none; }
+          .modes-section { padding: 64px 24px; }
+          .modes-grid { grid-template-columns: 1fr; }
+          .payouts-section { padding: 64px 24px; }
+          .closing-wrap { padding: 0 24px 80px; }
+          .closing-inner { padding: 56px 24px; }
+          .ci-btns { flex-direction: column; }
           footer { flex-direction: column; gap: 24px; padding: 40px 24px; text-align: center; }
-          .f-links { flex-wrap: wrap; justify-content: center; }
+          .f-nav { flex-wrap: wrap; justify-content: center; }
         }
       `}</style>
 
-      <div className="g-grid" />
-      <div className="glow-a" />
-      <div className="glow-b" />
+      {/* BG LAYERS */}
+      <div className="bg-grid" aria-hidden="true" />
+      <div className="glow-1" aria-hidden="true" />
+      <div className="glow-2" aria-hidden="true" />
 
-      {/* ── NAV ── */}
-      <nav className="nav">
-        <a href="/" className="nav-logo">
-          <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
-            <circle cx="7" cy="15" r="5" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <circle cx="23" cy="15" r="5" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <line x1="12" y1="15" x2="18" y2="15" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <circle cx="15" cy="15" r="2.5" fill="#5B4FE8"/>
-            <circle cx="7" cy="15" r="2" fill="#5B4FE8"/>
-            <circle cx="23" cy="15" r="2" fill="#5B4FE8"/>
+      {/* ══ NAV ══ */}
+      <nav className="nav" role="navigation" aria-label="Main navigation">
+        <a href="/" className="nav-logo" aria-label="Gagara home">
+          <svg width="26" height="26" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+            <circle cx="7"  cy="15" r="5"   stroke="#5448E4" strokeWidth="1.25"/>
+            <circle cx="23" cy="15" r="5"   stroke="#5448E4" strokeWidth="1.25"/>
+            <line x1="12" y1="15" x2="18" y2="15" stroke="#5448E4" strokeWidth="1.25"/>
+            <circle cx="15" cy="15" r="2.5" fill="#5448E4"/>
+            <circle cx="7"  cy="15" r="2"   fill="#5448E4"/>
+            <circle cx="23" cy="15" r="2"   fill="#5448E4"/>
           </svg>
           Gagara
         </a>
-        <div className="nav-center">
+        <div className="nav-links">
           <a href="#vault">The vault</a>
           <a href="#how">How it works</a>
           <a href="#modes">Deal modes</a>
           <a href="#payouts">Payouts</a>
         </div>
-        <div className="nav-right">
-          <a href="#" className="btn-ghost">Sign in</a>
-          <a href="#" className="btn-primary">Get started</a>
+        <div className="nav-actions">
+          <a href="/sign-in"  className="nav-signin">Sign in</a>
+          <a href="/get-started" className="nav-cta">Get started</a>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section className="hero">
-        <div className="hero-eyebrow">
+      {/* ══ HERO ══ */}
+      <section className="hero" aria-labelledby="hero-heading">
+        <div className="hero-label">
+          <span className="hero-label-line" aria-hidden="true" />
           Programmable escrow — Interledger Open Payments
         </div>
-        <h1 className="hero-h1">
-          The oldest problem<br/>in work — <em>solved.</em>
+        <h1 className="hero-h1" id="hero-heading">
+          The oldest problem<br />in work — <em>solved.</em>
         </h1>
-        <div className="hero-rule" />
-        <div className="hero-lower">
+        <div className="hero-divider" aria-hidden="true" />
+        <div className="hero-body">
           <p className="hero-desc">
             How do you trust a stranger with your money — or your time —
-            before the relationship is proven?<br/><br/>
-            <strong>Gagara locks funds in a transparent vault visible to both parties.</strong> Neither can touch the money alone. Release only happens when both sides confirm.
+            before the relationship is proven?<br /><br />
+            <strong>Gagara locks funds in a transparent vault visible to both parties.</strong> Neither
+            can touch the money alone. Release happens only when both sides confirm.
           </p>
           <div className="hero-right">
-            <div className="hero-stats">
+            <div className="hero-metrics">
               <div>
-                <div className="stat-num">3<span>×</span></div>
-                <div className="stat-label">Deal modes<br/>Personal · Business · Enterprise</div>
+                <div className="metric-val">3<span>×</span></div>
+                <div className="metric-label">Deal modes<br />Personal · Business · Enterprise</div>
               </div>
               <div>
-                <div className="stat-num">&lt;<span>1s</span></div>
-                <div className="stat-label">Internal transfer<br/>speed on Gagara</div>
+                <div className="metric-val">&lt;<span>1s</span></div>
+                <div className="metric-label">Internal transfer<br />speed on Gagara</div>
               </div>
               <div>
-                <div className="stat-num"><span>∞</span></div>
-                <div className="stat-label">Simultaneous<br/>deals per account</div>
+                <div className="metric-val"><span>∞</span></div>
+                <div className="metric-label">Simultaneous<br />deals per account</div>
               </div>
             </div>
-            <div className="hero-cta">
-              <a href="#" className="btn-primary">Create your first deal</a>
-              <a href="#vault" className="btn-ghost">See how it works →</a>
+            <div className="hero-btns">
+              <a href="/get-started" className="btn-lg">Create your first deal</a>
+              <a href="#vault" className="btn-text">See how it works →</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── GLASS VAULT ILLUSTRATION ── */}
-      <div className="vault-section" id="vault">
-        <div className="vault-eyebrow">The glass vault — both parties see everything</div>
+      {/* ══ VAULT ══ */}
+      <div className="page-max">
+        <div className="vault-wrap" id="vault">
+          <div className="vault-header">
+            <div className="vault-header-label">The glass vault — live deal</div>
+            <div className="vault-deal-id">GGR-4829-KXMT</div>
+          </div>
 
-        <div className="vault-illustration">
-          {/* PAYER PANEL */}
-          <div className="party-panel">
-            <div>
-              <div className="party-role">Payer</div>
-              <div className="party-identity">
-                <div className="avatar">G</div>
-                <div>
-                  <div className="party-name">@gaga</div>
-                  <div className="party-verified">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                      <circle cx="5" cy="5" r="4.5" fill="rgba(61,186,120,0.15)" stroke="#3DBA78" strokeWidth="0.5"/>
-                      <path d="M3 5l1.5 1.5L7 3.5" stroke="#3DBA78" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    KYC verified
+          {/* Three columns */}
+          <div className="vault-cols">
+
+            {/* PAYER */}
+            <div className="party-col">
+              <div>
+                <div className="p-role">Payer</div>
+                <div className="p-identity">
+                  <div className="p-avatar">G</div>
+                  <div>
+                    <div className="p-name">@gaga</div>
+                    <div className="p-kyc">
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                        <circle cx="5" cy="5" r="4.5" fill="rgba(46,173,110,0.12)" stroke="#2EAD6E" strokeWidth="0.6"/>
+                        <path d="M3 5l1.5 1.5L7 3.5" stroke="#2EAD6E" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      KYC verified
+                    </div>
                   </div>
                 </div>
               </div>
+              <div className="p-amount-section">
+                <div className="p-amount-label">
+                  {released ? 'Released' : funded ? 'Deposited to vault' : 'Depositing'}
+                </div>
+                <div className="p-amount">$800.00</div>
+                <div className={`p-state ${funded ? (released ? 'st-done' : 'st-locked') : ''}`}>
+                  {released ? 'Deal complete' : funded ? 'Locked in escrow' : 'Funding vault...'}
+                </div>
+              </div>
+              <div className="p-seeing">
+                <div className="seeing-pulse" />
+                {released ? 'Funds released to receiver' : funded ? 'Vault balance visible to you' : 'Awaiting deposit'}
+              </div>
             </div>
 
-            <div className="party-amount-wrap">
-              <div className="party-label">
-                {funded ? (released ? 'Released' : 'Deposited to vault') : 'Depositing'}
-              </div>
-              <div className="party-amount">$800.00</div>
-              <div className={`party-status ${funded ? (released ? 'released' : 'locked') : 'pending-s'}`} style={{marginTop:8}}>
-                {released ? '✓ deal complete' : funded ? '⟳ locked in escrow' : 'funding vault...'}
-              </div>
-            </div>
-
-            <div className="party-sees">
-              <div className="eye-dot" />
-              {released ? 'Funds received by receiver' : funded ? 'Vault balance visible to you' : 'Awaiting confirmation'}
-            </div>
-          </div>
-
-          {/* CENTER VAULT */}
-          <div className="vault-center">
-            {/* Connection lines */}
-            <svg className="connector-svg" viewBox="0 0 320 460" fill="none" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%'}}>
-              {/* Left wire */}
-              <line x1="0" y1="230" x2="80" y2="230" stroke="rgba(91,79,232,0.3)" strokeWidth="1"/>
-              {funded && <line x1="0" y1="230" x2="80" y2="230" stroke="#5B4FE8" strokeWidth="1.5" className="wire-traveler"/>}
-              {/* Right wire */}
-              <line x1="240" y1="230" x2="320" y2="230" stroke="rgba(91,79,232,0.3)" strokeWidth="1"/>
-              {released && <line x1="240" y1="230" x2="320" y2="230" stroke="#3DBA78" strokeWidth="1.5" className="wire-traveler-r"/>}
-            </svg>
-
-            {/* Deal ID */}
-            <div className="deal-id">GGR-4829-KXMT</div>
-
-            {/* THE VAULT SVG */}
-            <div className="vault-graphic">
-              <div className={`vault-amount-float ${released ? 'released-amt' : ''}`}>
-                {released ? '✓ $800' : '$800.00'}
-              </div>
-              <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%'}}>
-                {/* Outer glow */}
-                <circle cx="80" cy="80" r="75" fill={released ? 'rgba(61,186,120,0.04)' : 'rgba(91,79,232,0.06)'} style={{transition:'fill 0.6s'}}/>
-                {/* Vault body */}
-                <rect x="28" y="44" width="104" height="80" rx="10"
-                  fill="var(--surface3)"
-                  stroke={released ? '#3DBA78' : funded ? '#5B4FE8' : 'rgba(255,255,255,0.1)'}
-                  strokeWidth="1"
-                  style={{transition:'stroke 0.5s'}}
-                />
-                {/* Vault door */}
-                <rect x="54" y="62" width="52" height="44" rx="6"
-                  fill="var(--surface2)"
-                  stroke={released ? '#3DBA78' : funded ? 'rgba(91,79,232,0.6)' : 'rgba(255,255,255,0.08)'}
-                  strokeWidth="0.75"
-                  style={{transition:'stroke 0.5s'}}
-                />
-                {/* Lock circle */}
-                <circle cx="80" cy="84" r="12"
-                  fill={released ? 'rgba(61,186,120,0.15)' : 'rgba(91,79,232,0.12)'}
-                  stroke={released ? '#3DBA78' : '#5B4FE8'}
-                  strokeWidth="1"
-                  style={{transition:'all 0.5s'}}
-                />
-                {/* Lock icon */}
-                {!released ? (
-                  <>
-                    <rect x="75" y="80" width="10" height="8" rx="1.5" fill={funded ? '#5B4FE8' : 'rgba(91,79,232,0.4)'} style={{transition:'fill 0.4s'}}/>
-                    <path d="M77 80v-3a3 3 0 016 0v3" stroke={funded ? '#5B4FE8' : 'rgba(91,79,232,0.4)'} strokeWidth="1.25" strokeLinecap="round" style={{transition:'stroke 0.4s'}}/>
-                  </>
-                ) : (
-                  <path d="M76 84l2.5 2.5L84 80" stroke="#3DBA78" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                )}
-                {/* Handle */}
-                <rect x="77" y="106" width="6" height="10" rx="3" fill="rgba(255,255,255,0.06)"/>
-                {/* Top bolts */}
-                <circle cx="40" cy="52" r="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5"/>
-                <circle cx="120" cy="52" r="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5"/>
-                <circle cx="40" cy="116" r="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5"/>
-                <circle cx="120" cy="116" r="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5"/>
-                {/* Gagara label inside */}
-                <text x="80" y="138" textAnchor="middle" fill="rgba(91,79,232,0.5)" fontSize="7" fontFamily="DM Mono, monospace" letterSpacing="2">GAGARA</text>
+            {/* CENTER VAULT */}
+            <div className="vault-center">
+              {/* Wire SVGs */}
+              <svg style={{position:'absolute',top:'50%',left:'-1px',transform:'translateY(-50%)',width:'calc(100% + 2px)',height:'2px',overflow:'visible',pointerEvents:'none',zIndex:0}} aria-hidden="true">
+                <line x1="0%" y1="1" x2="100%" y2="1" stroke="rgba(84,72,228,0.2)" strokeWidth="1"/>
+                {funded && <line x1="0%" y1="1" x2="100%" y2="1" stroke="#5448E4" strokeWidth="1.5" className="wire-animated"/>}
               </svg>
+              <svg style={{position:'absolute',top:'50%',right:'-1px',transform:'translateY(-50%)',width:'calc(100% + 2px)',height:'2px',overflow:'visible',pointerEvents:'none',zIndex:0}} aria-hidden="true">
+                <line x1="0%" y1="1" x2="100%" y2="1" stroke="rgba(84,72,228,0.2)" strokeWidth="1"/>
+                {released && <line x1="0%" y1="1" x2="100%" y2="1" stroke="#2EAD6E" strokeWidth="1.5" className="wire-animated-r"/>}
+              </svg>
+
+              <div className="vault-id-tag">GGR-4829-KXMT</div>
+
+              {/* VAULT SVG */}
+              <div className="vault-svg-wrap">
+                <div className={`vault-float-amount ${released ? 'fa-released' : ''}`}>
+                  {released ? '$800.00' : '$800.00'}
+                </div>
+                <svg viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%'}} aria-label="Vault holding funds" role="img">
+                  {/* Outer ring */}
+                  <circle cx="74" cy="74" r="70"
+                    fill="none"
+                    stroke={released ? 'rgba(46,173,110,0.12)' : 'rgba(84,72,228,0.08)'}
+                    strokeWidth="0.5"
+                    style={{transition:'stroke 0.6s'}}
+                  />
+                  <circle cx="74" cy="74" r="60"
+                    fill="none"
+                    stroke={released ? 'rgba(46,173,110,0.06)' : 'rgba(84,72,228,0.05)'}
+                    strokeWidth="0.5"
+                    style={{transition:'stroke 0.6s'}}
+                  />
+                  {/* Body */}
+                  <rect x="26" y="40" width="96" height="74" rx="10"
+                    fill="var(--surface3)"
+                    stroke={released ? 'rgba(46,173,110,0.5)' : funded ? 'rgba(84,72,228,0.5)' : 'rgba(238,238,246,0.08)'}
+                    strokeWidth="0.75"
+                    style={{transition:'stroke 0.5s'}}
+                  />
+                  {/* Door */}
+                  <rect x="46" y="56" width="56" height="40" rx="6"
+                    fill="var(--surface4)"
+                    stroke={released ? 'rgba(46,173,110,0.3)' : funded ? 'rgba(84,72,228,0.3)' : 'rgba(238,238,246,0.06)'}
+                    strokeWidth="0.5"
+                    style={{transition:'stroke 0.5s'}}
+                  />
+                  {/* Corner bolts */}
+                  {[[30,48],[118,48],[30,108],[118,108]].map(([cx,cy],i) => (
+                    <circle key={i} cx={cx} cy={cy} r="3"
+                      fill="var(--surface4)"
+                      stroke="rgba(238,238,246,0.06)" strokeWidth="0.5"
+                    />
+                  ))}
+                  {/* Lock mechanism */}
+                  <circle cx="74" cy="76" r="14"
+                    fill={released ? 'rgba(46,173,110,0.1)' : 'rgba(84,72,228,0.08)'}
+                    stroke={released ? '#2EAD6E' : '#5448E4'}
+                    strokeWidth="0.75"
+                    style={{transition:'all 0.5s'}}
+                  />
+                  {!released ? (
+                    <>
+                      <rect x="69" y="73" width="10" height="8" rx="2"
+                        fill={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'}
+                        style={{transition:'fill 0.4s'}}
+                      />
+                      <path d="M71 73v-3.5a3 3 0 016 0V73"
+                        stroke={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'}
+                        strokeWidth="1.25" strokeLinecap="round"
+                        style={{transition:'stroke 0.4s'}}
+                      />
+                    </>
+                  ) : (
+                    <path d="M69.5 76l3 3L79.5 72"
+                      stroke="#2EAD6E" strokeWidth="1.5"
+                      strokeLinecap="round" strokeLinejoin="round"
+                    />
+                  )}
+                  {/* Handle */}
+                  <rect x="71" y="96" width="6" height="11" rx="3"
+                    fill="rgba(238,238,246,0.05)"
+                    stroke="rgba(238,238,246,0.06)" strokeWidth="0.5"
+                  />
+                  {/* GAGARA label */}
+                  <text x="74" y="128" textAnchor="middle"
+                    fill="rgba(84,72,228,0.35)"
+                    fontSize="6.5" fontFamily="IBM Plex Mono, monospace"
+                    letterSpacing="2.5">GAGARA</text>
+                </svg>
+              </div>
+
+              <div className={`vault-state-badge ${released ? 'vsb-released' : 'vsb-locked'}`}>
+                {released ? 'Released' : funded ? 'Funded & locked' : 'Linked'}
+              </div>
+
+              <div className="vault-caption">
+                Held by Gagara<br />Neither party can act alone
+              </div>
             </div>
 
-            <div className={`vault-badge ${released ? 'active' : 'locked-b'}`}>
-              {released ? '✓ released' : funded ? '⚡ funded & locked' : 'linked'}
-            </div>
-
-            <div className="gagara-holds">
-              Held by Gagara<br/>Neither party can act alone
-            </div>
-          </div>
-
-          {/* RECEIVER PANEL */}
-          <div className="party-panel receiver">
-            <div>
-              <div className="party-role">Receiver</div>
-              <div className="party-identity">
-                <div className="avatar">C</div>
-                <div>
-                  <div className="party-name">@client</div>
-                  <div className="party-verified">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                      <circle cx="5" cy="5" r="4.5" fill="rgba(61,186,120,0.15)" stroke="#3DBA78" strokeWidth="0.5"/>
-                      <path d="M3 5l1.5 1.5L7 3.5" stroke="#3DBA78" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    KYC verified
+            {/* RECEIVER */}
+            <div className="party-col recv">
+              <div>
+                <div className="p-role">Receiver</div>
+                <div className="p-identity">
+                  <div className="p-avatar">C</div>
+                  <div>
+                    <div className="p-name">@client</div>
+                    <div className="p-kyc">
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                        <circle cx="5" cy="5" r="4.5" fill="rgba(46,173,110,0.12)" stroke="#2EAD6E" strokeWidth="0.6"/>
+                        <path d="M3 5l1.5 1.5L7 3.5" stroke="#2EAD6E" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      KYC verified
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="party-amount-wrap">
-              <div className="party-label">
-                {released ? 'Received' : funded ? 'Awaiting release' : 'Pending'}
+              <div className="p-amount-section">
+                <div className="p-amount-label">
+                  {released ? 'Received' : funded ? 'Awaiting release' : 'Pending'}
+                </div>
+                <div className={`p-amount ${released ? 'amt-released' : 'amt-pending'}`}>
+                  {released ? '$800.00' : 'awaiting'}
+                </div>
+                <div className={`p-state ${released ? 'st-done' : ''}`}>
+                  {released ? 'Funds received' : funded ? 'Visible in vault — confirmation pending' : 'Not yet funded'}
+                </div>
               </div>
-              <div className={`party-amount ${released ? 'received' : 'pending'}`}>
-                {released ? '$800.00' : 'awaiting'}
+              <div className="p-seeing">
+                <div className="seeing-pulse" />
+                {released ? 'Transaction complete' : funded ? 'Vault balance visible to you' : 'Waiting for deposit'}
               </div>
-              <div className={`party-status ${released ? 'released' : 'pending-s'}`} style={{marginTop:8}}>
-                {released ? '✓ funds received' : funded ? 'visible in vault — confirmation pending' : 'not yet funded'}
-              </div>
-            </div>
-
-            <div className="party-sees" style={{justifyContent:'flex-end'}}>
-              <div className="eye-dot" />
-              {released ? 'Transaction complete' : funded ? 'Vault balance visible to you' : 'Waiting for funds'}
             </div>
           </div>
-        </div>
 
-        {/* AUDIT STRIP */}
-        <div style={{background:'var(--surface)', border:'0.5px solid var(--border2)', borderTop:'none', borderRadius:'0 0 24px 24px', overflow:'hidden'}}>
-          <div className="audit-strip">
-            {[
-              {t:'09:12:04', e:'Deal created', a:'@gaga'},
-              {t:'09:15:22', e:'Deal linked — The Link closed', a:'@client accepted'},
-              ...(funded ? [{t:'09:23:41', e:'$800.00 deposited to vault', a:'@gaga funded'}] : []),
-              ...(working ? [{t:'10:44:08', e:'Milestone 1 marked complete', a:'@client'}] : []),
-              ...(confirmed ? [{t:'11:02:15', e:'Completion confirmed', a:'@gaga'}] : []),
-              ...(released ? [{t:'11:02:16', e:'$800.00 released via Interledger', a:'→ instant'}] : []),
-            ].map((item, i) => (
-              <div key={i} className="audit-item" style={{animationDelay:`${i * 0.08}s`}}>
-                <div className="audit-t">{item.t}</div>
-                <div className="audit-e">{item.e}</div>
-                <div className="audit-a">{item.a}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="fw-line" />
-
-      {/* ── HOW A DEAL WORKS ── */}
-      <section className="section" id="how">
-        <div className="eyebrow">Deal flow</div>
-        <h2 className="s-h2">Five states. <em>No exceptions.</em></h2>
-        <p className="s-sub">
-          Every deal follows the same deterministic sequence. No state can be skipped.
-          Every action is logged permanently and visible to both parties.
-        </p>
-        <div className="steps-grid">
-          {[
-            {
-              n:'01', title:'Linked',
-              desc:'Deal code shared. Both parties connected. The Link closes. Awaiting fund deposit.',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            },
-            {
-              n:'02', title:'Funded & Locked',
-              desc:'Payer deposits. Funds enter the vault. Both parties see the balance. Neither can act alone.',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            },
-            {
-              n:'03', title:'In Progress',
-              desc:'Work happens. Milestones tracked. Every update is timestamped. Gagara watches everything.',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-            },
-            {
-              n:'04', title:'Confirming',
-              desc:'Conditions met. Both parties confirm. Dual confirmation required. No unilateral action.',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            },
-            {
-              n:'05', title:'Released',
-              desc:'Payout routed instantly via Interledger. Deal archived permanently. Relationship saved.',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"><polyline points="5 12 12 5 19 12"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
-            },
-          ].map((s, i) => (
-            <div key={i} className={`step ${i === (phase === 0 ? 0 : phase - 1) ? 's-active' : ''} ${i < (phase === 0 ? 0 : phase - 1) || released ? 's-done' : ''}`}>
-              <div className="step-node">{s.icon}</div>
-              <div className="step-n">{s.n}</div>
-              <div className="step-title">{s.title}</div>
-              <div className="step-desc">{s.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="fw-line" />
-
-      {/* ── DEAL MODES ── */}
-      <section className="section" id="modes">
-        <div className="eyebrow">Deal modes</div>
-        <h2 className="s-h2">One platform. <em>Every context.</em></h2>
-        <p className="s-sub">
-          Your account type — Individual or Business — is set once at signup.
-          The deal mode is chosen each time you create a new agreement.
-        </p>
-        <div className="modes">
-          {[
-            {
-              n:'01',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7B70F0" strokeWidth="1.25" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-              title:'Personal',
-              desc:'Freelancers, informal agreements, P2P transactions. Simple terms, fast setup, full protection.',
-              range:'$1 – $2,000',
-              items:['Single-release condition','48-hour deal code expiry','Instant mutual release','Full audit trail']
-            },
-            {
-              n:'02',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7B70F0" strokeWidth="1.25" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-              title:'Business',
-              desc:'Service contracts, supplier agreements, milestone-based deals. Structured, transparent, enforceable.',
-              range:'$200 – $50,000',
-              items:['Multi-milestone releases','Flexible timeline editing','Invoice generation','Priority dispute resolution']
-            },
-            {
-              n:'03',
-              icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.25" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>,
-              title:'Enterprise',
-              desc:'Large multi-milestone contracts, multi-party agreements, API-driven integrations at scale.',
-              range:'$10,000+',
-              items:['Multi-party deals','API access','Compliance documentation','Dedicated mediation']
-            },
-          ].map((m, i) => (
-            <div key={i} className="mode">
-              <div className="mode-n">{m.n}</div>
-              <div className="mode-icon">{m.icon}</div>
-              <div className="mode-title">{m.title}</div>
-              <div className="mode-desc">{m.desc}</div>
-              <div className="mode-range">{m.range}</div>
-              <ul className="mode-list">
-                {m.items.map((item, j) => <li key={j}>{item}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="fw-line" />
-
-      {/* ── PAYOUTS ── */}
-      <section className="section" id="payouts">
-        <div className="eyebrow">Payout infrastructure</div>
-        <h2 className="s-h2">Fastest route to <em>your money.</em></h2>
-        <p className="s-sub">
-          The receiver chooses their payout method. Gagara shows the estimated speed before
-          any confirmation — always. Powered by Interledger: currency-agnostic, network-agnostic.
-        </p>
-        <div className="payout-table">
-          <div className="pt-header">
-            <span>Method</span>
-            <span>Estimated speed</span>
-          </div>
-          {[
-            {method:'Gagara internal transfer', desc:'Both parties on Gagara — funds stay on-network', speed:'< 1 second', fast:true},
-            {method:'SEPA Instant', desc:'European bank accounts — always-on instant rail', speed:'< 10 seconds', fast:true},
-            {method:'Faster Payments (UK)', desc:'UK bank accounts — free, 24/7', speed:'< 2 minutes', fast:true},
-            {method:'Stablecoin (USDC · USDT)', desc:'Cross-border, unbanked — minimal operational cost', speed:'2 – 5 minutes', fast:true},
-            {method:'Mobile wallet (M-Pesa · GCash)', desc:'Africa · Southeast Asia — reaches the unbanked', speed:'< 5 minutes', fast:true},
-            {method:'Standard bank transfer', desc:'Universal fallback — all global accounts', speed:'1 – 3 days', fast:false},
-          ].map((p, i) => (
-            <div key={i} className="pt-row">
-              <div>
-                <div className="pt-method">{p.method}</div>
-                <div className="pt-desc">{p.desc}</div>
-              </div>
-              <div className={`pt-speed ${p.fast ? '' : 'slow'}`}>{p.speed}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CLOSING STATEMENT ── */}
-      <div className="closing">
-        <div className="closing-box">
-          <div className="closing-inner">
-            <div className="closing-eyebrow">Built on Interledger Open Payments</div>
-            <h2 className="closing-h">
-              Gagara solves the oldest<br/>problem in work — <em>trust.</em>
-            </h2>
-            <p className="closing-p">
-              Lock funds. Confirm conditions. Release with certainty.
-              For the freelancer in Manila, the contractor in Lagos,
-              the supplier in London — and everyone in between.
-            </p>
-            <div className="closing-cta">
-              <a href="#" className="btn-primary">Create your first deal</a>
-              <a href="#" className="btn-ghost">Sign in →</a>
-            </div>
-            <div className="closing-badges">
-              {['Interledger Open Payments','ILP Protocol','Web Monetization','AES-256 Encryption','KYC Verified','Audit Trail','Mobile-first','Cross-border'].map((b, i) => (
-                <span key={i} className="c-badge">{b}</span>
+          {/* AUDIT LOG */}
+          <div style={{background:'var(--surface)', border:'0.5px solid var(--border-md)', borderTop:'none', borderRadius:'0 0 var(--radius-xl) var(--radius-xl)', overflow:'hidden'}}>
+            <div className="audit-log" role="log" aria-label="Deal audit log" aria-live="polite">
+              {auditLog.map((entry, i) => (
+                <div key={`${i}-${phase}`} className="audit-entry" style={{animationDelay:`${i * 0.07}s`}}>
+                  <div className="ae-time">{entry.t}</div>
+                  <div className="ae-event">{entry.e}</div>
+                  <div className="ae-actor">{entry.a}</div>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── FOOTER ── */}
+      <div className="divider" aria-hidden="true" />
+
+      {/* ══ DEAL FLOW ══ */}
+      <div className="page-max">
+        <section className="steps-section" id="how" aria-labelledby="how-heading">
+          <div className="s-label">Deal flow</div>
+          <h2 className="s-h2" id="how-heading">Five states. <em>No exceptions.</em></h2>
+          <p className="s-body">
+            Every deal on Gagara follows the same deterministic sequence.
+            No state can be skipped. Every transition is logged permanently
+            and visible to both parties in real time.
+          </p>
+          <div className="steps-row">
+            {[
+              {
+                n:'01', title:'Linked',
+                desc:'Deal code shared. Both parties connected. The Link closes. Awaiting deposit.',
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              },
+              {
+                n:'02', title:'Funded & Locked',
+                desc:'Payer deposits. Funds enter the vault. Both see the balance. Neither acts alone.',
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              },
+              {
+                n:'03', title:'In Progress',
+                desc:'Work proceeds. Milestones tracked. Every update timestamped. Nothing unrecorded.',
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+              },
+              {
+                n:'04', title:'Confirming',
+                desc:'Conditions met. Dual confirmation required. No unilateral action. Ever.',
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              },
+              {
+                n:'05', title:'Released',
+                desc:'Payout routed via Interledger. Deal archived permanently. Relationship saved.',
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><polyline points="5 12 12 5 19 12"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+              },
+            ].map((s, i) => {
+              const currentStep = phase;
+              const isActive = i === currentStep;
+              const isDone   = i < currentStep || released;
+              return (
+                <div key={i} className={`step-item ${isActive ? 'si-active' : ''} ${isDone ? 'si-done' : ''}`}>
+                  <div className="step-icon-wrap" aria-hidden="true">{s.icon}</div>
+                  <div className="step-num">{s.n}</div>
+                  <div className="step-title">{s.title}</div>
+                  <div className="step-desc">{s.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+
+      <div className="divider" aria-hidden="true" />
+
+      {/* ══ DEAL MODES ══ */}
+      <div className="page-max">
+        <section className="modes-section" id="modes" aria-labelledby="modes-heading">
+          <div className="s-label">Deal modes</div>
+          <h2 className="s-h2" id="modes-heading">One platform. <em>Every context.</em></h2>
+          <p className="s-body">
+            Your account type is set once at signup — who you are legally on Gagara.
+            Your deal mode is chosen each time — what kind of agreement this is.
+          </p>
+          <div className="modes-grid">
+            {[
+              {
+                n:'01', enterprise: false,
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+                title:'Personal',
+                desc:'Freelancers, informal agreements, P2P transactions. Simple terms, fast setup, full protection from day one.',
+                range:'$1 – $2,000',
+                features:['Single-release condition','48-hour deal code expiry','Instant mutual release','Full audit trail']
+              },
+              {
+                n:'02', enterprise: false,
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+                title:'Business',
+                desc:'Service contracts, supplier agreements, milestone-based deals between companies and individuals.',
+                range:'$200 – $50,000',
+                features:['Multi-milestone releases','Flexible timeline editing','Invoice generation','Priority dispute resolution']
+              },
+              {
+                n:'03', enterprise: true,
+                icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.25" strokeLinecap="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>,
+                title:'Enterprise',
+                desc:'Large multi-milestone contracts, multi-party agreements, API-driven integrations at scale.',
+                range:'$10,000+',
+                features:['Multi-party deals','API access','Compliance documentation','Dedicated mediation']
+              },
+            ].map((m, i) => (
+              <div key={i} className={`mode-card ${m.enterprise ? 'enterprise-card' : ''}`}>
+                <div className="mc-num">{m.n}</div>
+                <div className="mc-icon" aria-hidden="true">{m.icon}</div>
+                <div className="mc-title">{m.title}</div>
+                <div className="mc-desc">{m.desc}</div>
+                <div className="mc-range">{m.range}</div>
+                <ul className="mc-features" aria-label={`${m.title} features`}>
+                  {m.features.map((f, j) => <li key={j}>{f}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <div className="divider" aria-hidden="true" />
+
+      {/* ══ PAYOUTS ══ */}
+      <div className="page-max">
+        <section className="payouts-section" id="payouts" aria-labelledby="payouts-heading">
+          <div className="s-label">Payout infrastructure</div>
+          <h2 className="s-h2" id="payouts-heading">Fastest route to <em>your money.</em></h2>
+          <p className="s-body">
+            The receiver chooses their payout method. Gagara shows the estimated arrival time
+            before any confirmation — always. Powered by Interledger Protocol: currency-agnostic,
+            network-agnostic, built for everyone.
+          </p>
+          <div className="payout-tbl" role="table" aria-label="Payout methods and speeds">
+            <div className="pt-head" role="row">
+              <span role="columnheader">Method</span>
+              <span role="columnheader">Estimated speed</span>
+            </div>
+            {[
+              {method:'Gagara internal transfer', desc:'Both parties on Gagara — funds stay on-network',          speed:'< 1 second',   fast:true },
+              {method:'SEPA Instant',             desc:'European bank accounts — always-on instant rail',        speed:'< 10 seconds', fast:true },
+              {method:'Faster Payments (UK)',     desc:'UK bank accounts — free, 24/7',                          speed:'< 2 minutes',  fast:true },
+              {method:'Stablecoin (USDC · USDT)', desc:'Cross-border, unbanked — minimal operational cost',     speed:'2 – 5 minutes',fast:true },
+              {method:'Mobile wallet (M-Pesa · GCash)', desc:'Africa · Southeast Asia — reaches the unbanked',  speed:'< 5 minutes',  fast:true },
+              {method:'Standard bank transfer',   desc:'Universal fallback — all global accounts',               speed:'1 – 3 days',   fast:false},
+            ].map((p, i) => (
+              <div key={i} className="pt-row" role="row">
+                <div role="cell">
+                  <div className="pt-method">{p.method}</div>
+                  <div className="pt-desc">{p.desc}</div>
+                </div>
+                <div className={`pt-speed ${p.fast ? '' : 'spd-slow'}`} role="cell">{p.speed}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* ══ CLOSING ══ */}
+      <div className="page-max">
+        <div className="closing-wrap">
+          <div className="closing-inner">
+            <div className="ci-content">
+              <div className="ci-eyebrow">Built on Interledger Open Payments</div>
+              <h2 className="ci-h">
+                Gagara solves the oldest<br />problem in work — <em>trust.</em>
+              </h2>
+              <p className="ci-p">
+                Lock funds. Confirm conditions. Release with certainty.
+                For the freelancer in Manila, the contractor in Lagos,
+                the supplier in London — and everyone in between.
+              </p>
+              <div className="ci-btns">
+                <a href="/get-started" className="btn-lg">Create your first deal</a>
+                <a href="/sign-in" className="btn-text">Sign in →</a>
+              </div>
+              <div className="ci-tags">
+                {['Interledger Open Payments','ILP Protocol','Web Monetization','AES-256 Encryption','KYC Verified','Audit Trail','Mobile-first','Cross-border'].map((tag, i) => (
+                  <span key={i} className="ci-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ FOOTER ══ */}
       <footer>
         <div className="f-logo">
-          <svg width="24" height="24" viewBox="0 0 30 30" fill="none">
-            <circle cx="7" cy="15" r="5" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <circle cx="23" cy="15" r="5" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <line x1="12" y1="15" x2="18" y2="15" stroke="#5B4FE8" strokeWidth="1.2"/>
-            <circle cx="15" cy="15" r="2.5" fill="#5B4FE8"/>
-            <circle cx="7" cy="15" r="2" fill="#5B4FE8"/>
-            <circle cx="23" cy="15" r="2" fill="#5B4FE8"/>
+          <svg width="22" height="22" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+            <circle cx="7"  cy="15" r="5"   stroke="#5448E4" strokeWidth="1.25"/>
+            <circle cx="23" cy="15" r="5"   stroke="#5448E4" strokeWidth="1.25"/>
+            <line x1="12" y1="15" x2="18" y2="15" stroke="#5448E4" strokeWidth="1.25"/>
+            <circle cx="15" cy="15" r="2.5" fill="#5448E4"/>
+            <circle cx="7"  cy="15" r="2"   fill="#5448E4"/>
+            <circle cx="23" cy="15" r="2"   fill="#5448E4"/>
           </svg>
           Gagara
         </div>
-        <ul className="f-links">
+        <ul className="f-nav">
           <li><a href="#vault">The vault</a></li>
           <li><a href="#how">How it works</a></li>
           <li><a href="#modes">Deal modes</a></li>
