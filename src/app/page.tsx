@@ -123,10 +123,10 @@ export default function GagaraHome() {
         .hero-desc { font-family: 'Figtree', sans-serif; font-size: 17px; font-weight: 400; color: var(--text-body); line-height: 1.72; max-width: 420px; }
         .hero-desc strong { color: var(--text-primary); font-weight: 600; }
         .hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 32px; }
-        .hero-stats { display: flex; gap: 40px; }
-        .stat-val { font-family: 'Fraunces', serif; font-size: 40px; font-weight: 300; letter-spacing: -1.5px; color: var(--text-primary); line-height: 1; margin-bottom: 8px; }
+        .hero-stats { display: flex; flex-direction: column; gap: 10px; }
         .stat-val span { color: var(--indigo-l); }
-        .stat-label { font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 400; color: var(--text-secondary); line-height: 1.5; }
+        .trust-line { font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 400; color: var(--text-secondary); line-height: 1.6; display: flex; align-items: flex-start; gap: 8px; }
+        .trust-line::before { content: '✓'; color: var(--green); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
         .hero-actions { display: flex; gap: 12px; align-items: center; }
         .btn-link { font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 400; color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 10px 0; transition: color 0.15s; text-decoration: none; display: inline-block; }
         .btn-link:hover { color: var(--text-primary); }
@@ -339,7 +339,7 @@ export default function GagaraHome() {
           .hero { padding: 88px 24px 64px; }
           .hero-body { grid-template-columns: 1fr; gap: 40px; }
           .hero-right { align-items: flex-start; }
-          .hero-stats { gap: 28px; }
+          .hero-stats { gap: 8px; }
           .vault-wrap { padding: 0 16px 80px; }
           .vault-wrap { padding: 0 16px 80px; }
           .uv-parties { padding: 20px 16px; gap: 8px; }
@@ -366,7 +366,7 @@ export default function GagaraHome() {
         }
 
         @media (max-width: 480px) {
-          .hero-stats { flex-direction: column; gap: 20px; }
+          .hero-stats { gap: 8px; }
           .p-amount { font-size: 32px; }
         }
       `}</style>
@@ -417,18 +417,9 @@ export default function GagaraHome() {
           </p>
           <div className="hero-right">
             <div className="hero-stats">
-              <div>
-                <div className="stat-val">2<span>×</span></div>
-                <div className="stat-label">Both sides covered<br />Not just one person</div>
-              </div>
-              <div>
-                <div className="stat-val"><span>0</span></div>
-                <div className="stat-label">Surprises<br />Everyone sees every step</div>
-              </div>
-              <div>
-                <div className="stat-val"><span>∞</span></div>
-                <div className="stat-label">Kinds of agreement<br />Small favour to big contract</div>
-              </div>
+              <div className="trust-line">Free to create — no fees until money moves</div>
+              <div className="trust-line">Money only moves when both sides agree</div>
+              <div className="trust-line">Works for any agreement, small or large</div>
             </div>
             <div className="hero-actions">
               <a href="/get-started" className="btn-primary">Create a free agreement</a>
