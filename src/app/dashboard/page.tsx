@@ -54,7 +54,9 @@ interface Deal {
 export default function Dashboard() {
   const router = useRouter();
   const [filter, setFilter]       = useState<Filter>('all');
-  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifOpen, setNotifOpen]   = useState(false);
+  const [notifs, setNotifs]           = useState<{id:string;text:string;time:string;urgent:boolean;read:boolean;deal_id:string|null;deal_code:string|null}[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [profile, setProfile]     = useState<Profile | null>(null);
   const [deals, setDeals]         = useState<Deal[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -88,6 +90,27 @@ export default function Dashboard() {
         .order('updated_at', { ascending: false });
 
       if (dealData) setDeals(dealData);
+
+      // Load notifications
+      const { data: notifData } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (notifData) {
+        setNotifs(notifData.map(n => ({
+          id: n.id,
+          text: n.text,
+          time: fmtAgo(n.created_at),
+          urgent: n.urgent,
+          read: n.read,
+          deal_id: n.deal_id,
+          deal_code: n.deal_code,
+        })));
+        setUnreadCount(notifData.filter(n => !n.read).length);
+      }
       setLoading(false);
     };
 
@@ -95,6 +118,24 @@ export default function Dashboard() {
   }, [router]);
 
   // Sign out
+  const fmtAgo = (iso: string) => {
+    const ms = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(ms / 60000);
+    const h = Math.floor(m / 60);
+    const d = Math.floor(h / 24);
+    if (d > 0) return `${d}d ago`;
+    if (h > 0) return `${h}h ago`;
+    if (m > 0) return `${m}m ago`;
+    return 'just now';
+  };
+
+  const markAllRead = async () => {
+    if (!profile?.id) return;
+    await supabase.from('notifications').update({ read: true }).eq('user_id', profile.id).eq('read', false);
+    setNotifs(n => n.map(x => ({ ...x, read: true })));
+    setUnreadCount(0);
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     router.push('/');
@@ -356,7 +397,7 @@ export default function Dashboard() {
             <div className="topbar-right">
               <button className="icon-btn" onClick={() => setNotifOpen(v => !v)} aria-label="Notifications">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-                {DEMO_MODE && <span className="notif-dot" aria-hidden="true" />}
+                {unreadCount > 0 && <span className="notif-dot" aria-hidden="true" />}
               </button>
               <a href="/new-deal" className="btn-new-deal">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -486,14 +527,23 @@ export default function Dashboard() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
-          {DEMO_MODE ? (
-            SAMPLE.notifications.map(n => (
-              <div key={n.id} style={{padding:'14px 20px',borderBottom:'0.5px solid var(--border)',display:'flex',gap:'12px',alignItems:'flex-start',cursor:'pointer'}}>
-                <div style={{width:'6px',height:'6px',borderRadius:'50%',background:n.urgent?'var(--gold)':'var(--text-faint)',flexShrink:0,marginTop:'4px'}} />
-                <div style={{fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'var(--text-body)',lineHeight:1.5,flex:1}}>{n.text}</div>
-                <div style={{fontFamily:'DM Mono,monospace',fontSize:'9px',color:'var(--text-faint)',whiteSpace:'nowrap',flexShrink:0,marginTop:'2px'}}>{n.time}</div>
+          {notifs.length > 0 ? (
+            <>
+              <div style={{padding:'8px 20px',borderBottom:'0.5px solid var(--border)',display:'flex',justifyContent:'flex-end'}}>
+                <button onClick={markAllRead} style={{background:'none',border:'none',fontFamily:'DM Sans,sans-serif',fontSize:'11px',color:'var(--text-faint)',cursor:'pointer',padding:'4px 0'}}>
+                  Mark all read
+                </button>
               </div>
-            ))
+              {notifs.map(n => (
+                <div key={n.id}
+                  onClick={() => { if (n.deal_id) { setNotifOpen(false); router.push(`/deal/${n.deal_id}`); } }}
+                  style={{padding:'14px 20px',borderBottom:'0.5px solid var(--border)',display:'flex',gap:'12px',alignItems:'flex-start',cursor:n.deal_id?'pointer':'default',background:n.read?'transparent':'rgba(91,79,232,0.04)'}}>
+                  <div style={{width:'6px',height:'6px',borderRadius:'50%',background:n.urgent?'var(--gold)':n.read?'var(--text-faint)':'var(--indigo-l)',flexShrink:0,marginTop:'4px'}} />
+                  <div style={{fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'var(--text-body)',lineHeight:1.5,flex:1}}>{n.text}</div>
+                  <div style={{fontFamily:'DM Mono,monospace',fontSize:'9px',color:'var(--text-faint)',whiteSpace:'nowrap',flexShrink:0,marginTop:'2px'}}>{n.time}</div>
+                </div>
+              ))}
+            </>
           ) : (
             <div className="notif-empty">No notifications yet</div>
           )}

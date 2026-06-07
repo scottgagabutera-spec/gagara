@@ -161,6 +161,23 @@ export default function Connect() {
 
       if (updateError) throw updateError;
 
+      // Notify the creator
+      const creatorId = deal.payer_id && deal.payer_id !== userId
+        ? deal.payer_id
+        : deal.receiver_id && deal.receiver_id !== userId
+        ? deal.receiver_id
+        : null;
+
+      if (creatorId) {
+        await supabase.from('notifications').insert({
+          user_id:   creatorId,
+          deal_id:   deal.id,
+          deal_code: deal.code,
+          text:      `Someone accepted your deal ${deal.code} — both parties are now connected`,
+          urgent:    false,
+        });
+      }
+
       setStage('accepted');
     } catch (e: any) {
       setError(e.message || 'Something went wrong. Please try again.');

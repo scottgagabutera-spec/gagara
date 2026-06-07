@@ -221,6 +221,22 @@ export default function DealPage() {
       status: newStatus,
     }).eq('id', deal.id);
 
+    // Notify the other party
+    const otherPartyId = myRole === 'payer' ? deal.receiver_id : deal.payer_id;
+    if (otherPartyId) {
+      const myHandle = myRole === 'payer' ? deal.payer_handle : deal.receiver_handle;
+      const notifText = bothDone
+        ? `${myHandle} confirmed a milestone on ${deal.code} — funds released`
+        : `${myHandle} confirmed a milestone on ${deal.code} — your confirmation needed`;
+      await supabase.from('notifications').insert({
+        user_id:   otherPartyId,
+        deal_id:   deal.id,
+        deal_code: deal.code,
+        text:      notifText,
+        urgent:    !bothDone,
+      });
+    }
+
     setDeal(d => {
       if (!d) return d;
       return {
@@ -266,6 +282,19 @@ export default function DealPage() {
       audit_log: newAudit,
     }).eq('id', deal.id);
 
+    // Notify the other party
+    const otherPartyId2 = myRole === 'payer' ? deal.receiver_id : deal.payer_id;
+    if (otherPartyId2) {
+      const myHandle2 = myRole === 'payer' ? deal.payer_handle : deal.receiver_handle;
+      await supabase.from('notifications').insert({
+        user_id:   otherPartyId2,
+        deal_id:   deal.id,
+        deal_code: deal.code,
+        text:      `${myHandle2} confirmed a condition on ${deal.code}`,
+        urgent:    false,
+      });
+    }
+
     setDeal(d => {
       if (!d) return d;
       return {
@@ -300,6 +329,19 @@ export default function DealPage() {
       dispute_reason: disputeText,
       audit_log: newAudit,
     }).eq('id', deal.id);
+
+    // Notify the other party
+    const otherPartyId3 = myRole === 'payer' ? deal.receiver_id : deal.payer_id;
+    if (otherPartyId3) {
+      const myHandle3 = myRole === 'payer' ? deal.payer_handle : deal.receiver_handle;
+      await supabase.from('notifications').insert({
+        user_id:   otherPartyId3,
+        deal_id:   deal.id,
+        deal_code: deal.code,
+        text:      `${myHandle3} raised a dispute on ${deal.code} — funds are frozen`,
+        urgent:    true,
+      });
+    }
 
     setDeal(d => d ? { ...d, status: 'disputed', audit: newAudit } : d);
     setDisputeSent(true);
