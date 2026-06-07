@@ -341,7 +341,7 @@ export default function NewDeal() {
             </svg>
             Gagara
           </a>
-          <div className="topbar-title">New deal — Step {step+1} of {STEPS.length}</div>
+          <div className="topbar-title">New agreement — Step {step+1} of {STEPS.length}</div>
           <a href="/dashboard" className="topbar-back">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             Cancel
@@ -365,7 +365,7 @@ export default function NewDeal() {
                   <div className="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
                   <div className="choice-body">
                     <div className="choice-title">I am paying</div>
-                    <div className="choice-desc">You lock funds into the vault. The receiver sees them. Funds release when both confirm.</div>
+                    <div className="choice-desc">You secure the funds through Gagara. The receiver sees they are there. The money only moves when both of you confirm the job is done.</div>
                   </div>
                   <span className="choice-badge badge-indigo">Payer</span>
                 </button>
@@ -373,7 +373,7 @@ export default function NewDeal() {
                   <div className="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
                   <div className="choice-body">
                     <div className="choice-title">I am receiving</div>
-                    <div className="choice-desc">You share the deal terms. The payer locks funds. You see the money in the vault before work starts.</div>
+                    <div className="choice-desc">You share the agreement terms. The payer secures the funds. You can see the money is held before you start anything.</div>
                   </div>
                   <span className="choice-badge badge-indigo">Receiver</span>
                 </button>
@@ -391,9 +391,9 @@ export default function NewDeal() {
               </div>
               <div className="choice-grid">
                 {[
-                  {key:'personal', title:'Personal', desc:'Freelancers, small jobs, money between friends.', range:'$1 – $2,000', badge:'badge-indigo'},
-                  {key:'business', title:'Business', desc:'Service contracts, supplier deals, project milestones.', range:'$200 – $50,000', badge:'badge-indigo'},
-                  {key:'enterprise', title:'Enterprise', desc:'Large contracts, multiple parties. Built for precision.', range:'$10,000+', badge:'badge-gold'},
+                  {key:'personal', title:'Personal', desc:'For freelancers, small jobs and agreements between individuals.', range:'$1 – $2,000', badge:'badge-indigo'},
+                  {key:'business', title:'Business', desc:'For service contracts, supplier agreements and project work.', range:'$200 – $50,000', badge:'badge-indigo'},
+                  {key:'enterprise', title:'Enterprise', desc:'For large contracts and multi-party agreements requiring precision.', range:'$10,000+', badge:'badge-gold'},
                 ].map(m => (
                   <button key={m.key} className={`choice-card ${deal.mode===m.key?'selected':''}`} onClick={() => update({mode:m.key as Mode})}>
                     <div className="choice-body">
@@ -498,7 +498,7 @@ export default function NewDeal() {
                 </>
               )}
               <div style={{marginTop:'8px'}}>
-                <div className="field-label" style={{marginBottom:'8px'}}>Release conditions <span style={{marginLeft:'8px',fontFamily:'DM Sans',fontSize:'10px',color:'var(--text-faint)',textTransform:'none',letterSpacing:'normal'}}>— both must confirm each one</span></div>
+                <div className="field-label" style={{marginBottom:'8px'}}>Release conditions <span style={{marginLeft:'8px',fontFamily:'DM Sans',fontSize:'10px',color:'var(--text-faint)',textTransform:'none',letterSpacing:'normal'}}>both must confirm each one</span></div>
                 <div className="conditions">
                   {deal.conditions.map((c,i) => (
                     <div key={c.id} className="condition-row">
@@ -526,7 +526,7 @@ export default function NewDeal() {
               <div className="step-header">
                 <div className="step-eyebrow"><span className="step-eyebrow-line"/>Step 5 of 6</div>
                 <div className="step-title">Review your deal</div>
-                <div className="step-desc">The other party will see exactly this when they enter the Deal Code.</div>
+                <div className="step-desc">The other party will see exactly this when they enter the agreement code.</div>
               </div>
               <div className="review-card">
                 <div className="review-section">
@@ -569,8 +569,8 @@ export default function NewDeal() {
             <>
               <div className="step-header">
                 <div className="step-eyebrow"><span className="step-eyebrow-line"/>Step 6 of 6</div>
-                <div className="step-title">Your Deal Code is ready</div>
-                <div className="step-desc">Share this code with the other party. They enter it at gagara.vercel.app/connect to review and accept.</div>
+                <div className="step-title">Your agreement code is ready</div>
+                <div className="step-desc">Share this code with the other party. They enter it at gagara.vercel.app/connect to review and accept the terms.</div>
               </div>
               <div className="deal-code-box">
                 <div className="code-label">Deal code</div>

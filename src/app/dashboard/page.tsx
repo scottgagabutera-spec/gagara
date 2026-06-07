@@ -15,7 +15,7 @@ const SAMPLE = {
   actions: 2,
   deals: [
     { id: 'GGR-4829-KXMT', mode: 'Business', status: 'Action needed', statusCode: 'action', amount: 800.00, currency: 'USD', counterparty: '@client', role: 'Payer', description: 'Brand identity package', milestone: 'Milestone 1 complete — confirm release?', updated: '2 hours ago' },
-    { id: 'GGR-3301-LFPQ', mode: 'Personal', status: 'Locked', statusCode: 'locked', amount: 350.00, currency: 'USD', counterparty: '@marcos', role: 'Receiver', description: 'Logo redesign — final files', milestone: 'Work in progress', updated: '1 day ago' },
+    { id: 'GGR-3301-LFPQ', mode: 'Personal', status: 'Locked', statusCode: 'locked', amount: 350.00, currency: 'USD', counterparty: '@marcos', role: 'Receiver', description: 'Logo redesign, final files', milestone: 'Work in progress', updated: '1 day ago' },
     { id: 'GGR-7712-BSWN', mode: 'Business', status: 'Pending link', statusCode: 'pending', amount: 1250.00, currency: 'USD', counterparty: '—', role: 'Payer', description: 'Web development retainer Q3', milestone: 'Waiting for receiver to connect', updated: '3 days ago' },
     { id: 'GGR-5500-RXQT', mode: 'Personal', status: 'Completed', statusCode: 'completed', amount: 200.00, currency: 'USD', counterparty: '@jenna', role: 'Receiver', description: 'Content writing — 4 articles', milestone: 'Released via Gagara transfer', updated: '5 days ago' },
   ],
@@ -195,7 +195,7 @@ export default function Dashboard() {
     <div style={{ minHeight:'100vh', background:'#07070A', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'DM Sans',sans-serif" }}>
       <div style={{ textAlign:'center' }}>
         <div style={{ width:'36px', height:'36px', border:'2px solid rgba(245,245,247,0.08)', borderTopColor:'#7B70F0', borderRadius:'50%', margin:'0 auto 16px', animation:'spin 0.8s linear infinite' }} />
-        <p style={{ color:'rgba(245,245,247,0.38)', fontSize:'13px' }}>Loading your vault…</p>
+        <p style={{ color:'rgba(245,245,247,0.38)', fontSize:'13px' }}>Loading your dashboard…</p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </div>
@@ -356,7 +356,7 @@ export default function Dashboard() {
             </button>
             <a href="/new-deal" className="nav-item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              My Deals
+              My Agreements
             </a>
             <a href="/connect" className="nav-item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
@@ -401,7 +401,7 @@ export default function Dashboard() {
               </button>
               <a href="/new-deal" className="btn-new-deal">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                New deal
+                New agreement
               </a>
             </div>
           </header>
@@ -415,7 +415,7 @@ export default function Dashboard() {
                 {lockedForMe > 0 ? (
                   <>
                     <div className="q-amount incoming">${lockedForMe.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
-                    <div className="q-sub">Across {displayDeals.filter(d => d.role === 'Receiver' && d.statusCode !== 'completed').length} active deals</div>
+                    <div className="q-sub">Across {displayDeals.filter(d => d.role === 'Receiver' && d.statusCode !== 'completed').length} active agreements</div>
                     <div className="q-live"><span className="live-dot green" aria-hidden="true" />Live balance</div>
                   </>
                 ) : (
@@ -431,7 +431,7 @@ export default function Dashboard() {
                 {lockedByMe > 0 ? (
                   <>
                     <div className="q-amount outgoing">${lockedByMe.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
-                    <div className="q-sub">Across {displayDeals.filter(d => d.role === 'Payer' && d.statusCode === 'locked').length} active deals</div>
+                    <div className="q-sub">Across {displayDeals.filter(d => d.role === 'Payer' && d.statusCode === 'locked').length} active agreements</div>
                     <div className="q-live"><span className="live-dot indigo" aria-hidden="true" />Live balance</div>
                   </>
                 ) : (
@@ -461,7 +461,7 @@ export default function Dashboard() {
 
             {/* DEAL LIST */}
             <div className="deals-header">
-              <div className="deals-title">Active deals</div>
+              <div className="deals-title">Active agreements</div>
               <div className="filter-tabs" role="tablist">
                 {(['all','incoming','outgoing','action','completed'] as Filter[]).map(f => (
                   <button key={f} className={`filter-tab ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)} role="tab" aria-selected={filter === f}>
@@ -477,9 +477,9 @@ export default function Dashboard() {
                   <div className="empty-icon" aria-hidden="true">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                   </div>
-                  <div className="empty-title">No deals here</div>
-                  <div className="empty-desc">{filter === 'all' ? 'Create your first deal or enter a Deal Code to get started.' : `No ${filter} deals right now.`}</div>
-                  {filter === 'all' && <a href="/new-deal" className="empty-cta">Create your first deal</a>}
+                  <div className="empty-title">No agreements here</div>
+                  <div className="empty-desc">{filter === 'all' ? 'Create your first agreement or enter a code to get started.' : `No ${filter} agreements right now.`}</div>
+                  {filter === 'all' && <a href="/new-deal" className="empty-cta">Create your first agreement</a>}
                 </div>
               ) : (
                 filteredDeals.map(deal => (
@@ -491,7 +491,7 @@ export default function Dashboard() {
                       <div className="deal-meta">
                         <span>{deal.counterparty}</span>
                         <span className="deal-meta-sep">·</span>
-                        <span>{deal.role === 'Receiver' ? '[Incoming]' : '[Outgoing]'} {deal.role}</span>
+                        <span>{deal.role === 'Receiver' ? 'Incoming' : 'Outgoing'}</span>
                         <span className="deal-meta-sep">·</span>
                         <span>{deal.updated}</span>
                       </div>
