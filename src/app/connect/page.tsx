@@ -38,6 +38,16 @@ export default function Connect() {
   const [userId,  setUserId]  = useState<string | null>(null);
   const [userHandle, setUserHandle] = useState<string | null>(null);
 
+  // Read code from URL on load (handles redirect back after sign in)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlCode = params.get('code');
+    if (urlCode) {
+      const formatted = urlCode.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{3})(.{4})(.{4})$/, '$1-$2-$3');
+      setCode(formatted);
+    }
+  }, []);
+
   // Get current session (optional — not required to view, required to accept)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -56,6 +66,13 @@ export default function Connect() {
   }, []);
 
   // Format input as GGR-XXXX-XXXX
+  // Auto-lookup when code arrives from URL redirect
+  useEffect(() => {
+    if (code.length === 12 && stage === 'entry') {
+      lookup();
+    }
+  }, [code]);
+
   const formatCode = (raw: string) => {
     const clean = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (clean.length <= 3)  return clean;
