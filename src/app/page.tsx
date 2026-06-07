@@ -204,6 +204,7 @@ export default function GagaraHome() {
         @keyframes uvPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.3; transform:scale(0.5); } }
 
         /* Hide old vault classes */
+        .mobile-nav { display: none; }
         .vault-mobile { display: none !important; }
         .vault-cols   { display: none !important; }
 
@@ -352,10 +353,21 @@ export default function GagaraHome() {
           .section { padding: 64px 24px; }
           .steps-grid { grid-template-columns: 1fr; gap: 0; }
           .steps-grid::before { display: none; }
-          .step { flex-direction: row; align-items: flex-start; gap: 16px; padding: 16px 0; padding-right: 0; border-bottom: 0.5px solid var(--border); }
+          .step { display: block; padding: 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
           .step:last-child { border-bottom: none; }
+          .step-header { display: flex; align-items: center; gap: 14px; padding: 16px 0; }
           .step-icon { width: 40px; height: 40px; min-width: 40px; margin-bottom: 0; flex-shrink: 0; }
-          .step-num { margin-bottom: 4px; }
+          .step-header-text { flex: 1; min-width: 0; }
+          .step-num { margin-bottom: 2px; }
+          .step-chevron { display: block; color: var(--text-faint); transition: transform 0.2s; flex-shrink: 0; }
+          .step.open .step-chevron { transform: rotate(180deg); }
+          .step-desc { display: none; font-size: 12px; color: var(--text-secondary); line-height: 1.6; padding: 0 0 14px 54px; }
+          .step.open .step-desc { display: block; }
+          /* Quick-jump nav pills */
+          .mobile-nav { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 0 0 4px; margin-top: 20px; -webkit-overflow-scrolling: touch; }
+          .mobile-nav::-webkit-scrollbar { display: none; }
+          .mobile-nav-pill { font-family: 'Figtree', sans-serif; font-size: 12px; font-weight: 500; color: var(--text-secondary); background: var(--surface2); border: 0.5px solid var(--border); border-radius: 20px; padding: 6px 14px; white-space: nowrap; cursor: pointer; text-decoration: none; transition: all 0.15s; flex-shrink: 0; }
+          .mobile-nav-pill:hover { color: var(--text-primary); border-color: var(--border-md); }
           .modes-grid { grid-template-columns: 1fr; }
           .stories-grid { grid-template-columns: 1fr; }
           .closing { padding: 0 16px 80px; }
