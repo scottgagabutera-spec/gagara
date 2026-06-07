@@ -271,36 +271,47 @@ export default function GagaraHome() {
 
         /* Mobile vault — hidden on desktop, shown on mobile */
         .vault-mobile { display: none; border-radius: var(--r-2xl) var(--r-2xl) 0 0; overflow: hidden; }
-        .vm-header { padding: 20px 20px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
-        .vm-id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--indigo-l); letter-spacing: 0.08em; }
-        .vm-amount { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 300; letter-spacing: -1px; color: var(--text-primary); transition: color 0.5s; }
-        .vm-amount.released { color: var(--green); }
-        .vm-steps { display: flex; flex-direction: column; }
-        .vm-step { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 0.5px solid var(--border); position: relative; transition: background 0.4s; }
-        .vm-step:last-child { border-bottom: none; }
-        .vm-step.active { background: rgba(84,72,228,0.04); }
-        .vm-step.done   { background: rgba(43,168,106,0.03); }
-        .vm-dot-wrap { width: 32px; height: 32px; border-radius: 50%; border: 0.5px solid var(--border-md); background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.4s; }
-        .vm-step.active .vm-dot-wrap { border-color: rgba(84,72,228,0.4); background: var(--indigo-dim); }
-        .vm-step.done   .vm-dot-wrap { border-color: rgba(43,168,106,0.4); background: var(--green-dim); }
-        .vm-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); transition: all 0.4s; }
-        .vm-step.active .vm-dot { background: var(--indigo-l); animation: vmPulse 1.5s ease-in-out infinite; }
-        .vm-step.done   .vm-dot { background: var(--green); }
-        .vm-step-label { font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-secondary); transition: color 0.4s; flex: 1; }
-        .vm-step.active .vm-step-label { color: var(--text-primary); }
-        .vm-step.done   .vm-step-label { color: var(--green); }
-        .vm-step-actor { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); white-space: nowrap; transition: color 0.4s; }
-        .vm-step.active .vm-step-actor { color: var(--indigo-l); }
-        .vm-step.done   .vm-step-actor { color: var(--green); opacity: 0.7; }
-        .vm-parties { display: grid; grid-template-columns: 1fr 1fr; border-top: 0.5px solid var(--border); }
-        .vm-party { padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; }
-        .vm-party:first-child { border-right: 0.5px solid var(--border); }
-        .vm-party-role { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint); }
-        .vm-party-name { font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-primary); }
-        .vm-party-state { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-secondary); transition: color 0.4s; }
-        .vm-party-state.active { color: var(--indigo-l); }
-        .vm-party-state.done   { color: var(--green); }
-        @keyframes vmPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+
+        /* Transaction card — two parties */
+        .vtc-parties { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 24px 20px; gap: 12px; }
+        .vtc-party { display: flex; flex-direction: column; gap: 6px; }
+        .vtc-party.right { align-items: flex-end; text-align: right; }
+        .vtc-role { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+        .vtc-avatar { width: 44px; height: 44px; border-radius: var(--r-md); background: var(--surface4); border: 0.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-family: 'Figtree', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); transition: border-color 0.4s; }
+        .vtc-avatar.funded { border-color: rgba(84,72,228,0.5); }
+        .vtc-avatar.done   { border-color: rgba(43,168,106,0.5); }
+        .vtc-name { font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+        .vtc-verified { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--green); display: flex; align-items: center; gap: 4px; }
+        .vtc-party.right .vtc-verified { justify-content: flex-end; }
+        .vtc-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .vtc-arrow-line { width: 1px; height: 20px; background: var(--border); position: relative; overflow: hidden; }
+        .vtc-arrow-pulse { position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(to bottom, transparent, var(--indigo-l), transparent); animation: vtcFlow 1.8s linear infinite; opacity: 0; transition: opacity 0.4s; }
+        .vtc-arrow-pulse.active { opacity: 1; }
+        .vtc-arrow-pulse.green { background: linear-gradient(to bottom, transparent, var(--green), transparent); }
+        .vtc-arrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-md); transition: all 0.4s; flex-shrink: 0; }
+        .vtc-arrow-dot.active { background: var(--indigo-l); }
+        .vtc-arrow-dot.done   { background: var(--green); }
+        @keyframes vtcFlow { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
+        .vtc-amount-wrap { border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .vtc-amount { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 300; letter-spacing: -1.5px; color: var(--text-primary); transition: color 0.5s; line-height: 1; }
+        .vtc-amount.released { color: var(--green); }
+        .vtc-badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border-radius: 5px; transition: all 0.4s; }
+        .vtc-badge.locked   { color: var(--indigo-l); background: var(--indigo-dim); border: 0.5px solid rgba(84,72,228,0.2); }
+        .vtc-badge.released { color: var(--green); background: var(--green-dim); border: 0.5px solid rgba(43,168,106,0.2); }
+        .vtc-badge.pending  { color: var(--text-faint); background: rgba(238,238,248,0.03); border: 0.5px solid var(--border); }
+        .vtc-timeline { display: flex; flex-direction: column; }
+        .vtc-event { display: flex; align-items: center; gap: 12px; padding: 13px 20px; border-bottom: 0.5px solid var(--border); transition: background 0.3s; }
+        .vtc-event:last-child { border-bottom: none; }
+        .vtc-event.active { background: rgba(84,72,228,0.03); }
+        .vtc-event-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--border-md); transition: all 0.4s; }
+        .vtc-event.active .vtc-event-dot { background: var(--indigo-l); animation: vtcPulse 1.4s ease-in-out infinite; }
+        .vtc-event.done   .vtc-event-dot { background: var(--green); }
+        .vtc-event-text { font-family: 'Figtree', sans-serif; font-size: 12px; color: var(--text-secondary); flex: 1; transition: color 0.3s; }
+        .vtc-event.active .vtc-event-text { color: var(--text-primary); font-weight: 500; }
+        .vtc-event-time { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); white-space: nowrap; }
+        .vtc-id { padding: 10px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); letter-spacing: 0.08em; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; }
+        .vtc-id-note { color: var(--indigo-l); }
+        @keyframes vtcPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.3; transform:scale(0.5); } }
 
         @media (max-width: 1024px) {
           .nav { padding: 0 24px; }
@@ -409,54 +420,72 @@ export default function GagaraHome() {
           </div>
           <div className="vault-card">
 
-            {/* ── MOBILE VAULT (shown on mobile, hidden on desktop) ── */}
+            {/* ── MOBILE VAULT — Live transaction card (mobile only) ── */}
             <div className="vault-mobile">
-              <div className="vm-header">
-                <div className="vm-id">GGR-4829-KXMT</div>
-                <div className={`vm-amount ${released ? 'released' : ''}`}>
-                  {released ? '$800.00 sent' : '$800.00'}
+
+              <div className="vtc-parties">
+                <div className="vtc-party">
+                  <div className="vtc-role">Paying</div>
+                  <div className={`vtc-avatar ${released ? 'done' : funded ? 'funded' : ''}`}>G</div>
+                  <div className="vtc-name">@gaga</div>
+                  <div className="vtc-verified">
+                    <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Verified
+                  </div>
+                </div>
+                <div className="vtc-arrow">
+                  <div className={`vtc-arrow-dot ${released ? 'done' : funded ? 'active' : ''}`} />
+                  <div className="vtc-arrow-line">
+                    <div className={`vtc-arrow-pulse ${funded ? 'active' : ''} ${released ? 'green' : ''}`} />
+                  </div>
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{flexShrink:0}}>
+                    <path d="M0 0l4 5 4-5" fill={released ? '#2BA86A' : funded ? '#7268ED' : 'rgba(238,238,248,0.15)'} style={{transition:'fill 0.4s'}}/>
+                  </svg>
+                  <div className="vtc-arrow-line" style={{transform:'scaleY(-1)'}}>
+                    <div className={`vtc-arrow-pulse ${funded ? 'active' : ''} ${released ? 'green' : ''}`} style={{animationDelay:'0.9s'}} />
+                  </div>
+                  <div className={`vtc-arrow-dot ${released ? 'done' : funded ? 'active' : ''}`} />
+                </div>
+                <div className="vtc-party right">
+                  <div className="vtc-role">Receiving</div>
+                  <div className={`vtc-avatar ${released ? 'done' : working ? 'funded' : ''}`} style={{marginLeft:'auto'}}>C</div>
+                  <div className="vtc-name">@client</div>
+                  <div className="vtc-verified">
+                    <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Verified
+                  </div>
                 </div>
               </div>
-              <div className="vm-steps">
+
+              <div className="vtc-amount-wrap">
+                <div className={`vtc-amount ${released ? 'released' : ''}`}>$800.00</div>
+                <div className={`vtc-badge ${released ? 'released' : funded ? 'locked' : 'pending'}`}>
+                  {released ? 'Released' : funded ? 'Reserved' : 'Pending'}
+                </div>
+              </div>
+
+              <div className="vtc-timeline">
                 {[
-                  { label: 'Agreement created',       actor: '@gaga',          done: true,      active: false },
-                  { label: 'Both sides connected',    actor: '@client joined', done: true,      active: false },
-                  { label: '$800 reserved by payer',  actor: '@gaga',          done: funded,    active: !funded && phase === 0 },
-                  { label: 'Work in progress',        actor: '@client',        done: working,   active: funded && !working },
-                  { label: 'Payer confirmed done',    actor: '@gaga',          done: confirmed, active: working && !confirmed },
-                  { label: 'Payment released',        actor: 'Gagara',         done: released,  active: confirmed && !released },
-                ].map((s, i) => (
-                  <div key={i} className={`vm-step ${s.done ? 'done' : ''} ${s.active ? 'active' : ''}`}>
-                    <div className="vm-dot-wrap">
-                      <div className="vm-dot">
-                        {s.done && (
-                          <svg style={{position:'absolute',width:'12px',height:'12px',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}} viewBox="0 0 12 12" fill="none">
-                            <path d="M2.5 6l2.5 2.5L9.5 4" stroke="#2BA86A" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                    <div className="vm-step-label">{s.label}</div>
-                    <div className="vm-step-actor">{s.actor}</div>
+                  { text: 'Agreement created by @gaga',     time: '09:12', done: true,      active: false },
+                  { text: '@client joined',                  time: '09:15', done: true,      active: false },
+                  { text: '$800 reserved — work can start', time: '09:23', done: funded,    active: !funded },
+                  { text: 'Work confirmed complete',         time: '10:44', done: working,   active: funded && !working },
+                  { text: 'Both sides confirmed done',       time: '11:02', done: confirmed, active: working && !confirmed },
+                  { text: '$800 sent to @client',            time: '11:02', done: released,  active: confirmed && !released },
+                ].map((ev, i) => (
+                  <div key={i} className={`vtc-event ${ev.done ? 'done' : ev.active ? 'active' : ''}`}>
+                    <div className="vtc-event-dot" />
+                    <div className="vtc-event-text">{ev.text}</div>
+                    {(ev.done || ev.active) && <div className="vtc-event-time">{ev.time}</div>}
                   </div>
                 ))}
               </div>
-              <div className="vm-parties">
-                <div className="vm-party">
-                  <div className="vm-party-role">Payer</div>
-                  <div className="vm-party-name">@gaga</div>
-                  <div className={`vm-party-state ${released ? 'done' : funded ? 'active' : ''}`}>
-                    {released ? 'Payment sent' : funded ? 'Money reserved' : 'Waiting'}
-                  </div>
-                </div>
-                <div className="vm-party">
-                  <div className="vm-party-role">Receiver</div>
-                  <div className="vm-party-name">@client</div>
-                  <div className={`vm-party-state ${released ? 'done' : working ? 'active' : ''}`}>
-                    {released ? 'Payment received' : working ? 'Working' : 'Waiting'}
-                  </div>
-                </div>
+
+              <div className="vtc-id">
+                <span>GGR-4829-KXMT</span>
+                <span className="vtc-id-note">Managed by Gagara</span>
               </div>
+
             </div>
 
             {/* ── DESKTOP VAULT (hidden on mobile, shown on desktop) ── */}
