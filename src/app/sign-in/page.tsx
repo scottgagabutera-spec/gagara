@@ -5,47 +5,44 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 const C = {
-  black:    '#07070A',
-  surface:  '#0D0D12',
-  surface2: '#111118',
-  surface3: '#16161F',
-  surface4: '#1A1A28',
-  indigo:   '#5B4FE8',
-  indigoL:  '#7B70F0',
-  indigoDim:'rgba(91,79,232,0.1)',
-  gold:     '#C9A84C',
-  green:    '#5DCC8A',
-  red:      '#E05252',
-  textP:    '#F5F5F7',
-  textB:    'rgba(245,245,247,0.72)',
-  textS:    'rgba(245,245,247,0.50)',
-  textL:    'rgba(245,245,247,0.38)',
-  textF:    'rgba(245,245,247,0.20)',
-  border:   'rgba(245,245,247,0.06)',
-  borderMd: 'rgba(245,245,247,0.10)',
+  black:'#07070A', surface:'#0D0D12', surface2:'#111118', surface3:'#16161F',
+  indigo:'#5B4FE8', indigoL:'#7B70F0', indigoDim:'rgba(91,79,232,0.1)',
+  gold:'#C9A84C', green:'#5DCC8A', red:'#E05252',
+  textP:'#F5F5F7', textB:'rgba(245,245,247,0.72)', textS:'rgba(245,245,247,0.50)',
+  textL:'rgba(245,245,247,0.38)', textF:'rgba(245,245,247,0.20)',
+  border:'rgba(245,245,247,0.06)', borderMd:'rgba(245,245,247,0.10)',
 };
 
 export default function SignIn() {
   const router = useRouter();
-  const [mounted, setMounted]           = useState(false);
-  const [email, setEmail]               = useState('');
-  const [password, setPassword]         = useState('');
-  const [loading, setLoading]           = useState(false);
+  const [mounted, setMounted]             = useState(false);
+  const [checking, setChecking]           = useState(true);
+  const [email, setEmail]                 = useState('');
+  const [password, setPassword]           = useState('');
+  const [loading, setLoading]             = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [showEmail, setShowEmail]       = useState(false);
-  const [error, setError]               = useState('');
-  const [redirectTo, setRedirectTo]     = useState<string | null>(null);
+  const [showEmail, setShowEmail]         = useState(false);
+  const [error, setError]                 = useState('');
+  const [redirectTo, setRedirectTo]       = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
     const p = new URLSearchParams(window.location.search);
     const r = p.get('redirectTo');
     if (r) setRedirectTo(r);
-  }, []);
+
+    // If already signed in, skip the sign-in page entirely
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.replace(r || '/dashboard');
+      } else {
+        setChecking(false);
+      }
+    });
+  }, [router]);
 
   const handleGoogle = async () => {
-    setGoogleLoading(true);
-    setError('');
+    setGoogleLoading(true); setError('');
     if (redirectTo) localStorage.setItem('gagara_redirect', redirectTo);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -62,11 +59,19 @@ export default function SignIn() {
       if (e) throw e;
       if (data.user) router.push(redirectTo || '/dashboard');
     } catch (e: any) {
-      setError(e.message || 'Invalid email or password');
+      setError(e.message || 'Invalid email or password.');
     } finally {
       setLoading(false);
     }
   };
+
+  // Show spinner while checking session
+  if (checking) return (
+    <div style={{ minHeight:'100vh', background:C.black, display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <div style={{ width:'32px', height:'32px', border:'2px solid rgba(245,245,247,0.08)', borderTopColor:'#7B70F0', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   return (
     <>
@@ -74,197 +79,49 @@ export default function SignIn() {
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; }
-        body {
-          background: ${C.black};
-          color: ${C.textP};
-          font-family: 'DM Sans', sans-serif;
-          -webkit-font-smoothing: antialiased;
-          overflow-x: hidden;
-        }
+        body { background: ${C.black}; color: ${C.textP}; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         ::selection { background: rgba(91,79,232,0.25); color: #fff; }
         input::placeholder { color: ${C.textF}; }
         .tb { transition: transform 100ms ease, filter 100ms ease; }
         .tb:active { transform: scale(0.97); filter: brightness(0.9); }
-
-        .glow {
-          position: fixed; pointer-events: none; z-index: 0;
-          width: 700px; height: 700px; border-radius: 50%;
-          top: -300px; left: 50%; transform: translateX(-50%);
-          background: radial-gradient(circle, rgba(91,79,232,0.05) 0%, transparent 65%);
-        }
-        .grid-bg {
-          position: fixed; inset: 0; z-index: 0; pointer-events: none;
-          background-image:
-            linear-gradient(rgba(91,79,232,0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(91,79,232,0.02) 1px, transparent 1px);
-          background-size: 72px 72px;
-        }
-
-        .topbar {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-          height: 64px;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 0 32px;
-          background: rgba(7,7,10,0.88); backdrop-filter: blur(24px);
-          border-bottom: 0.5px solid ${C.border};
-        }
-        .logo {
-          display: flex; align-items: center; gap: 10px;
-          font-family: 'Syne', sans-serif;
-          font-size: 17px; font-weight: 800;
-          color: ${C.textP}; text-decoration: none; letter-spacing: -0.3px;
-        }
-        .nav-link {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px; color: ${C.textS};
-          text-decoration: none; transition: color 0.15s;
-        }
+        .glow { position: fixed; pointer-events: none; z-index: 0; width: 700px; height: 700px; border-radius: 50%; top: -300px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(91,79,232,0.05) 0%, transparent 65%); }
+        .grid-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(91,79,232,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(91,79,232,0.02) 1px, transparent 1px); background-size: 72px 72px; }
+        .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: rgba(7,7,10,0.88); backdrop-filter: blur(24px); border-bottom: 0.5px solid ${C.border}; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: ${C.textP}; text-decoration: none; letter-spacing: -0.3px; }
+        .nav-link { font-family: 'DM Sans', sans-serif; font-size: 13px; color: ${C.textS}; text-decoration: none; transition: color 0.15s; }
         .nav-link:hover { color: ${C.textP}; }
-
-        .center {
-          min-height: 100vh;
-          display: flex; align-items: center; justify-content: center;
-          padding: 80px 20px;
-          position: relative; z-index: 1;
-        }
-
-        .panel {
-          width: 100%; max-width: 420px;
-          opacity: 0; transform: translateY(16px);
-          transition: opacity 0.5s ease, transform 0.5s ease;
-        }
+        .center { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 80px 20px; position: relative; z-index: 1; }
+        .panel { width: 100%; max-width: 420px; opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
         .panel.visible { opacity: 1; transform: translateY(0); }
-
         .panel-head { text-align: center; margin-bottom: 36px; }
-        .panel-eyebrow {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-          color: ${C.indigoL}; margin-bottom: 20px;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .panel-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: ${C.indigoL}; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .eyebrow-line { width: 20px; height: 1px; background: ${C.indigoL}; }
-        .panel-title {
-          font-family: 'Syne', sans-serif;
-          font-size: 28px; font-weight: 800;
-          color: ${C.textP}; letter-spacing: -0.8px; margin-bottom: 8px;
-        }
-        .panel-sub {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 14px; color: ${C.textS}; line-height: 1.6;
-        }
-
-        .card {
-          background: ${C.surface};
-          border: 0.5px solid ${C.borderMd};
-          border-radius: 20px;
-          padding: 28px;
-          position: relative; overflow: hidden;
-        }
-        .card::before {
-          content: '';
-          position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-          width: 220px; height: 0.5px;
-          background: linear-gradient(90deg, transparent, ${C.indigoL}, transparent);
-        }
-
-        .error-box {
-          background: rgba(224,82,82,0.08);
-          border: 0.5px solid rgba(224,82,82,0.25);
-          border-radius: 10px;
-          padding: 12px 14px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 12px; color: ${C.red};
-          margin-bottom: 16px; line-height: 1.5;
-        }
-
+        .panel-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: ${C.textP}; letter-spacing: -0.8px; margin-bottom: 8px; }
+        .panel-sub { font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.textS}; line-height: 1.6; }
+        .card { background: ${C.surface}; border: 0.5px solid ${C.borderMd}; border-radius: 20px; padding: 28px; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 220px; height: 0.5px; background: linear-gradient(90deg, transparent, ${C.indigoL}, transparent); }
+        .error-box { background: rgba(224,82,82,0.08); border: 0.5px solid rgba(224,82,82,0.25); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: ${C.red}; margin-bottom: 16px; line-height: 1.5; }
         .auth-btns { display: flex; flex-direction: column; gap: 10px; }
-
-        .btn-google {
-          width: 100%; padding: 13px 16px;
-          border-radius: 12px;
-          border: 0.5px solid ${C.borderMd};
-          background: #fff; color: #1a1a1a;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 14px; font-weight: 600;
-          cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .btn-google { width: 100%; padding: 13px 16px; border-radius: 12px; border: 0.5px solid ${C.borderMd}; background: #fff; color: #1a1a1a; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-google:disabled { opacity: 0.7; cursor: wait; }
-
-        .btn-email-toggle {
-          width: 100%; padding: 13px 16px;
-          border-radius: 12px;
-          border: 0.5px solid ${C.borderMd};
-          background: transparent; color: ${C.textS};
-          font-family: 'DM Sans', sans-serif;
-          font-size: 14px; font-weight: 400;
-          cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          transition: all 0.15s;
-        }
+        .btn-email-toggle { width: 100%; padding: 13px 16px; border-radius: 12px; border: 0.5px solid ${C.borderMd}; background: transparent; color: ${C.textS}; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.15s; }
         .btn-email-toggle:hover { color: ${C.textP}; background: ${C.surface2}; }
-
-        .divider {
-          display: flex; align-items: center; gap: 12px;
-          margin: 20px 0;
-        }
+        .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
         .divider-line { flex: 1; height: 0.5px; background: ${C.border}; }
-        .divider-text {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px; color: ${C.textF}; letter-spacing: 0.1em;
-        }
-
+        .divider-text { font-family: 'DM Mono', monospace; font-size: 9px; color: ${C.textF}; letter-spacing: 0.1em; }
         .email-fields { display: flex; flex-direction: column; gap: 10px; }
-        .field-input {
-          width: 100%; padding: 13px 16px;
-          background: ${C.surface2};
-          border: 0.5px solid ${C.borderMd};
-          border-radius: 12px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 14px; color: ${C.textP};
-          outline: none; transition: border-color 0.15s;
-        }
+        .field-input { width: 100%; padding: 13px 16px; background: ${C.surface2}; border: 0.5px solid ${C.borderMd}; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.textP}; outline: none; transition: border-color 0.15s; }
         .field-input:focus { border-color: rgba(91,79,232,0.5); }
-
-        .btn-signin {
-          width: 100%; padding: 14px;
-          border-radius: 12px;
-          background: ${C.indigo}; color: #fff; border: none;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 14px; font-weight: 500;
-          cursor: pointer; transition: background 0.15s;
-          box-shadow: 0 4px 20px rgba(91,79,232,0.3);
-        }
+        .btn-signin { width: 100%; padding: 14px; border-radius: 12px; background: ${C.indigo}; color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; box-shadow: 0 4px 20px rgba(91,79,232,0.3); }
         .btn-signin:hover { background: ${C.indigoL}; }
         .btn-signin:disabled { opacity: 0.7; cursor: wait; }
-
-        .panel-foot {
-          text-align: center;
-          margin-top: 20px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px; color: ${C.textS};
-        }
+        .panel-foot { text-align: center; margin-top: 20px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: ${C.textS}; }
         .panel-foot a { color: ${C.indigoL}; text-decoration: none; font-weight: 500; }
         .panel-foot a:hover { text-decoration: underline; }
-
-        .kyc-note {
-          margin-top: 20px;
-          padding: 12px 16px;
-          background: rgba(201,168,76,0.05);
-          border: 0.5px solid rgba(201,168,76,0.12);
-          border-radius: 10px;
-          display: flex; gap: 10px; align-items: flex-start;
-        }
+        .kyc-note { margin-top: 20px; padding: 12px 16px; background: rgba(201,168,76,0.05); border: 0.5px solid rgba(201,168,76,0.12); border-radius: 10px; display: flex; gap: 10px; align-items: flex-start; }
         .kyc-note svg { color: ${C.gold}; flex-shrink: 0; margin-top: 1px; }
-        .kyc-note-text {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 11px; color: ${C.textS}; line-height: 1.6;
-        }
-
-        @media (max-width: 480px) {
-          .topbar { padding: 0 20px; }
-          .card { padding: 20px; }
-        }
+        .kyc-note-text { font-family: 'DM Sans', sans-serif; font-size: 11px; color: ${C.textS}; line-height: 1.6; }
+        @media (max-width: 480px) { .topbar { padding: 0 20px; } .card { padding: 20px; } }
       `}</style>
 
       <div className="grid-bg" aria-hidden="true" />
@@ -301,9 +158,7 @@ export default function SignIn() {
 
           <div className="card">
             {error && <div className="error-box">{error}</div>}
-
             <div className="auth-btns">
-              {/* Google */}
               <button className="btn-google tb" onClick={handleGoogle} disabled={googleLoading}>
                 <svg width="18" height="18" viewBox="0 0 48 48">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -313,8 +168,6 @@ export default function SignIn() {
                 </svg>
                 {googleLoading ? 'Redirecting…' : 'Continue with Google'}
               </button>
-
-              {/* Email toggle */}
               <button className="btn-email-toggle tb" onClick={() => setShowEmail(v => !v)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -332,22 +185,8 @@ export default function SignIn() {
                   <div className="divider-line" />
                 </div>
                 <div className="email-fields">
-                  <input
-                    className="field-input"
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleEmail()}
-                  />
-                  <input
-                    className="field-input"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleEmail()}
-                  />
+                  <input className="field-input" type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleEmail()} autoFocus />
+                  <input className="field-input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleEmail()} />
                   <button className="btn-signin tb" onClick={handleEmail} disabled={loading}>
                     {loading ? 'Signing in…' : 'Sign in'}
                   </button>
