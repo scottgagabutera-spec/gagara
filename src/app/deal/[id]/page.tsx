@@ -87,14 +87,14 @@ export default function DealPage() {
         .single();
 
       if (fetchErr || !data) {
-        setError('Deal not found or you do not have access.');
+        setError('Agreement not found or you do not have access.');
         setLoading(false);
         return;
       }
 
       // Make sure user is a party to this deal
       if (data.payer_id !== session.user.id && data.receiver_id !== session.user.id) {
-        setError('You are not a party to this deal.');
+        setError('You are not a party to this agreement.');
         setLoading(false);
         return;
       }
@@ -139,7 +139,7 @@ export default function DealPage() {
 
       // Build audit log
       const auditRows: AuditEntry[] = data.audit_log || [
-        { time: fmtTime(data.created_at), event: 'Deal created', actor: handleOf(data.payer_profile) },
+        { time: fmtTime(data.created_at), event: 'Agreement created', actor: handleOf(data.payer_profile) },
         ...(data.payer_id && data.receiver_id
           ? [{ time: fmtTime(data.created_at), event: 'Both parties connected', actor: `${handleOf(data.receiver_profile)} joined`, highlight: true }]
           : []),
@@ -400,7 +400,7 @@ export default function DealPage() {
         a { color: #7B70F0; }
       `}</style>
       <div style={{ textAlign: 'center' }}>
-        <p>{error || 'Deal not found.'}</p>
+        <p>{error || 'Agreement not found.'}</p>
         <a href="/dashboard">Back to dashboard</a>
       </div>
     </>
@@ -659,7 +659,7 @@ export default function DealPage() {
               <div className="balance-strip">
                 <div className="balance-cell">
                   <div className="balance-val" style={{color:'var(--indigo-l)'}}>{deal.currency} {deal.amount.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
-                  <div className="balance-label">In vault</div>
+                  <div className="balance-label">Secured</div>
                 </div>
                 <div className="balance-cell-div" />
                 <div className="balance-cell">
@@ -678,7 +678,7 @@ export default function DealPage() {
             {dealComplete && (
               <div className="complete-banner">
                 <div className="cb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-                <div className="cb-text"><strong>Deal complete.</strong> All conditions confirmed by both parties. All funds have been released. Download the full audit PDF from the panel.</div>
+                <div className="cb-text"><strong>Agreement complete.</strong> All conditions confirmed by both parties. All funds have been released. Download the full audit PDF from the panel.</div>
               </div>
             )}
 
@@ -814,7 +814,7 @@ export default function DealPage() {
 
             <div className="card">
               <div className="card-body">
-                <div className="mini-label">Deal info</div>
+                <div className="mini-label">Agreement info</div>
                 {[
                   ['Code',    deal.code],
                   ['Mode',    deal.mode],

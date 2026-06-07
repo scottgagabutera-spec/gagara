@@ -88,7 +88,7 @@ export default function Connect() {
   const lookup = async () => {
     const normalized = code.trim().toUpperCase();
     if (normalized.length < 12) {
-      setError('Enter the full Deal Code — it looks like GGR-XXXX-XXXX');
+      setError('Enter the full agreement code. It looks like GGR-XXXX-XXXX');
       return;
     }
     setStage('loading');
@@ -173,7 +173,7 @@ export default function Connect() {
           user_id:   creatorId,
           deal_id:   deal.id,
           deal_code: deal.code,
-          text:      `Someone accepted your deal ${deal.code} — both parties are now connected`,
+          text:      `Someone accepted your agreement ${deal.code}. Both parties are now connected.`,
           urgent:    false,
         });
       }
@@ -513,9 +513,9 @@ export default function Connect() {
             {/* ENTRY */}
             {stage === 'entry' && (
               <>
-                <div className="eyebrow"><span className="eyebrow-line"/>Enter Deal Code</div>
-                <div className="page-title">You received a deal.<br/>Review it here.</div>
-                <div className="page-desc">The other party shared a Deal Code with you. Enter it below to see the full terms before you agree to anything.</div>
+                <div className="eyebrow"><span className="eyebrow-line"/>Enter agreement code</div>
+                <div className="page-title">Someone shared an agreement with you.<br/>Review it here.</div>
+                <div className="page-desc">The other party shared an agreement code with you. Enter it below to see the full terms before you agree to anything.</div>
                 <div className="code-entry">
                   <div className="code-field">
                     <input
@@ -539,7 +539,7 @@ export default function Connect() {
                       {error}
                     </div>
                   )}
-                  <div className="entry-note">No account needed to review a deal.<br/>You only need to sign in if you choose to accept.</div>
+                  <div className="entry-note">No account needed to review an agreement.<br/>You only need to sign in if you choose to accept.</div>
                 </div>
               </>
             )}
@@ -548,7 +548,7 @@ export default function Connect() {
             {stage === 'loading' && (
               <div className="loading-box">
                 <div className="spinner" aria-hidden="true"/>
-                <div className="loading-text">Looking up deal</div>
+                <div className="loading-text">Looking up agreement</div>
               </div>
             )}
 
@@ -556,7 +556,7 @@ export default function Connect() {
             {stage === 'accepting' && (
               <div className="loading-box">
                 <div className="spinner" aria-hidden="true"/>
-                <div className="loading-text">Connecting you to this deal</div>
+                <div className="loading-text">Connecting you to this agreement</div>
               </div>
             )}
 
@@ -566,8 +566,8 @@ export default function Connect() {
                 <div className="state-icon red">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
-                <div className="state-title">Deal not found</div>
-                <div className="state-desc">This code does not match any active deal. It may have been typed incorrectly.</div>
+                <div className="state-title">Agreement not found</div>
+                <div className="state-desc">This code does not match any active agreement. It may have been typed incorrectly.</div>
                 <button className="btn-retry" onClick={restart}>Try again</button>
               </div>
             )}
@@ -578,8 +578,8 @@ export default function Connect() {
                 <div className="state-icon gold">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
-                <div className="state-title">Deal code expired</div>
-                <div className="state-desc">This Deal Code is no longer valid. Ask the other party to create a new deal and share the updated code.</div>
+                <div className="state-title">Agreement code expired</div>
+                <div className="state-desc">This agreement code is no longer valid. Ask the other party to create a new agreement and share the updated code.</div>
                 <button className="btn-retry" onClick={restart}>Enter another code</button>
               </div>
             )}
@@ -590,8 +590,8 @@ export default function Connect() {
                 <div className="state-icon indigo">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <div className="state-title">Deal already connected</div>
-                <div className="state-desc">Both parties are already linked to this deal. Check your dashboard for its status.</div>
+                <div className="state-title">Agreement already connected</div>
+                <div className="state-desc">Both parties are already linked to this agreement. Check your dashboard for its status.</div>
                 <a href="/dashboard" className="btn-dashboard" style={{marginTop:'4px'}}>Go to dashboard</a>
               </div>
             )}
@@ -601,9 +601,9 @@ export default function Connect() {
               const creator = creatorLabel(deal);
               return (
                 <>
-                  <div className="eyebrow"><span className="eyebrow-line"/>Review deal terms</div>
+                  <div className="eyebrow"><span className="eyebrow-line"/>Review agreement terms</div>
                   <div className="page-title">Read carefully before you accept.</div>
-                  <div className="page-desc">These are the exact terms set by the other party. Once you accept, both of you are committed.</div>
+                  <div className="page-desc">These are the exact terms set by the other party. Once you accept, both of you are committed to them.</div>
 
                   <div className="deal-card">
                     <div className="deal-header">
@@ -666,7 +666,7 @@ export default function Connect() {
 
                     {deal.conditions?.length > 0 && (
                       <div className="deal-conditions">
-                        <div className="section-label">Release conditions — both must confirm every one</div>
+                        <div className="section-label">Release conditions. Both must confirm every one.</div>
                         {deal.conditions.map((c, i) => (
                           <div key={i} className="condition-item">
                             <span className="condition-num">0{i+1}</span>
@@ -679,7 +679,7 @@ export default function Connect() {
                     <div className="vault-notice">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                       <div className="vault-notice-text">
-                        <strong>Funds are held in the Gagara vault.</strong> Neither party can touch the money alone. It releases only when both confirm all conditions are met.
+                        <strong>Your money is protected by both parties.</strong> Neither side can touch the funds alone. The money only moves when both of you confirm every condition is met.
                       </div>
                     </div>
                   </div>
@@ -688,7 +688,7 @@ export default function Connect() {
                     <div className="auth-nudge">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                       <div className="auth-nudge-text">
-                        <strong>You need to sign in to accept.</strong> Tapping Accept will take you to sign in and bring you straight back to this deal.
+                        <strong>You need to sign in to accept.</strong> Tapping Accept will take you to sign in and bring you straight back to this agreement.
                       </div>
                     </div>
                   )}
@@ -702,11 +702,11 @@ export default function Connect() {
                   <div className="deal-actions">
                     <button className="btn-accept" onClick={accept}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      {userId ? 'Accept this deal' : 'Sign in to accept'}
+                      {userId ? 'Accept this agreement' : 'Sign in to accept'}
                     </button>
                     <button className="btn-decline" onClick={decline}>Decline</button>
                     <div className="action-note">
-                      By accepting, you confirm you have read and agreed to all conditions above. The other party will be notified immediately.
+                      By accepting, you confirm you have read and agreed to all conditions above. The other party will be notified right away.
                     </div>
                   </div>
                 </>
@@ -722,7 +722,7 @@ export default function Connect() {
                 <div className="result-title">You are connected</div>
                 <div className="result-code">{deal?.code}</div>
                 <div className="result-desc">
-                  Both parties are now linked. Once funds are deposited into the vault, the deal becomes active and you will both see the balance.
+                  Both parties are now linked. Once funds are secured, the agreement becomes active and you will both see the balance.
                 </div>
                 <a href="/dashboard" className="btn-dashboard">Go to dashboard</a>
               </div>
@@ -735,7 +735,7 @@ export default function Connect() {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </div>
                 <div className="result-title">Deal declined</div>
-                <div className="result-desc">You have declined this deal. The other party has been notified. No funds were moved and nothing was committed.</div>
+                <div className="result-desc">You have declined this agreement. The other party has been notified. No funds were moved and nothing was committed.</div>
                 <button className="btn-retry" onClick={restart}>Enter another code</button>
               </div>
             )}
