@@ -56,6 +56,28 @@ export default function NewDeal() {
   const [error,   setError]   = useState('');
   const [userId,  setUserId]  = useState<string | null>(null);
 
+  // Restore saved progress on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('gagara_newdeal_draft');
+      if (saved) {
+        const { step: s, deal: d } = JSON.parse(saved);
+        if (s && s < 5) { setStep(s); setDeal(d); }
+      }
+    } catch {}
+  }, []);
+
+  // Save progress whenever step or deal changes
+  useEffect(() => {
+    if (step >= 5) {
+      localStorage.removeItem('gagara_newdeal_draft');
+    } else {
+      try {
+        localStorage.setItem('gagara_newdeal_draft', JSON.stringify({ step, deal }));
+      } catch {}
+    }
+  }, [step, deal]);
+
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -95,6 +117,7 @@ export default function NewDeal() {
 
         if (insertError) throw insertError;
         setCode(newCode);
+        localStorage.removeItem('gagara_newdeal_draft');
         setStep(s => s + 1);
       } catch (e: any) {
         setError(e.message || 'Failed to create deal. Please try again.');

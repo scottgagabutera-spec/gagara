@@ -332,7 +332,7 @@ export default function Dashboard() {
             </button>
           </nav>
           <div className="sidebar-bottom">
-            <div className="user-card">
+            <a href="/profile" className="user-card" style={{textDecoration:'none'}}>
               <div className="user-avatar">{avatarLetter}</div>
               <div className="user-info">
                 <div className="user-handle">{displayHandle}</div>
@@ -341,7 +341,7 @@ export default function Dashboard() {
                   {displayType}
                 </div>
               </div>
-            </div>
+            </a>
             <button className="sign-out-btn" onClick={signOut}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               Sign out
