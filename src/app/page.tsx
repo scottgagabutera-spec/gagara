@@ -327,8 +327,12 @@ export default function GagaraHome() {
           .vault-mobile { display: flex; flex-direction: column; }
           .audit { padding: 16px 20px; }
           .section { padding: 64px 24px; }
-          .steps-grid { grid-template-columns: 1fr; gap: 28px; }
+          .steps-grid { grid-template-columns: 1fr; gap: 0; }
           .steps-grid::before { display: none; }
+          .step { flex-direction: row; align-items: flex-start; gap: 16px; padding: 16px 0; padding-right: 0; border-bottom: 0.5px solid var(--border); }
+          .step:last-child { border-bottom: none; }
+          .step-icon { width: 40px; height: 40px; min-width: 40px; margin-bottom: 0; flex-shrink: 0; }
+          .step-num { margin-bottom: 4px; }
           .modes-grid { grid-template-columns: 1fr; }
           .stories-grid { grid-template-columns: 1fr; }
           .closing { padding: 0 16px 80px; }
