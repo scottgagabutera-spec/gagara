@@ -140,54 +140,74 @@ export default function GagaraHome() {
         .sec-desc { font-family: 'Figtree', sans-serif; font-size: 16px; font-weight: 400; color: var(--text-body); line-height: 1.72; max-width: 500px; margin-bottom: 56px; }
         .divider { height: 0.5px; background: var(--border); position: relative; z-index: 1; }
 
-        .vault-wrap { padding: 0 48px 96px; overflow: hidden; width: 100%; }
-        .vault-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+        .vault-wrap { padding: 0 48px 96px; width: 100%; }
+        .vault-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
         .vault-meta-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-label); display: flex; align-items: center; gap: 12px; }
         .vault-meta-label::before { content: ''; width: 20px; height: 0.5px; background: var(--text-label); flex-shrink: 0; }
         .vault-deal-id { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--indigo-l); letter-spacing: 0.06em; }
-
         .vault-card { border: 0.5px solid var(--border-md); border-radius: var(--r-2xl); overflow: hidden; background: var(--surface); width: 100%; }
-        .vault-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 220px) minmax(0, 1fr); width: 100%; }
 
-        .party-col { padding: 40px 32px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; border-right: 0.5px solid var(--border); overflow: hidden; min-width: 0; }
-        .party-col.recv { border-right: none; border-left: 0.5px solid var(--border); align-items: flex-end; text-align: right; }
+        /* Unified vault — works on all screen sizes */
+        .uv-parties { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 28px 32px; gap: 16px; border-bottom: 0.5px solid var(--border); }
+        .uv-party { display: flex; align-items: center; gap: 14px; }
+        .uv-party.right { flex-direction: row-reverse; }
+        .uv-avatar { width: 44px; height: 44px; min-width: 44px; border-radius: var(--r-md); background: var(--surface4); border: 0.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-family: 'Figtree', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); transition: border-color 0.5s; flex-shrink: 0; }
+        .uv-avatar.active { border-color: rgba(84,72,228,0.6); box-shadow: 0 0 0 3px rgba(84,72,228,0.08); }
+        .uv-avatar.done   { border-color: rgba(43,168,106,0.6); box-shadow: 0 0 0 3px rgba(43,168,106,0.08); }
+        .uv-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        .uv-party.right .uv-info { align-items: flex-end; text-align: right; }
+        .uv-role { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+        .uv-name { font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .uv-verified { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--green); display: flex; align-items: center; gap: 4px; }
+        .uv-party.right .uv-verified { flex-direction: row-reverse; }
+        .uv-state { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); transition: color 0.4s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .uv-state.active { color: var(--indigo-l); }
+        .uv-state.done   { color: var(--green); }
 
-        .p-role { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-faint); }
-        .p-id { display: flex; align-items: center; gap: 12px; }
-        .party-col.recv .p-id { flex-direction: row-reverse; }
-        .p-avatar { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--surface4); border: 0.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-primary); flex-shrink: 0; }
-        .p-name { font-family: 'Figtree', sans-serif; font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
-        .p-verified { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 5px; }
-        .party-col.recv .p-verified { justify-content: flex-end; }
+        /* Center vault indicator */
+        .uv-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+        .uv-center-line { width: 1px; height: 16px; position: relative; overflow: hidden; background: var(--border); }
+        .uv-flow { position: absolute; top: 0; left: 0; right: 0; height: 6px; animation: uvFlow 1.6s linear infinite; opacity: 0; transition: opacity 0.4s; }
+        .uv-flow.active { opacity: 1; }
+        .uv-flow.indigo { background: linear-gradient(to bottom, transparent, var(--indigo-l), transparent); }
+        .uv-flow.green  { background: linear-gradient(to bottom, transparent, var(--green), transparent); }
+        @keyframes uvFlow { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
+        .uv-lock-wrap { width: 40px; height: 40px; border-radius: 50%; background: var(--surface3); border: 0.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; transition: all 0.5s; flex-shrink: 0; }
+        .uv-lock-wrap.active { background: var(--indigo-dim); border-color: rgba(84,72,228,0.4); }
+        .uv-lock-wrap.done   { background: var(--green-dim);  border-color: rgba(43,168,106,0.4); }
+        .uv-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.08em; color: var(--text-faint); text-align: center; white-space: nowrap; }
 
-        .p-amount-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
-        .p-amount { font-family: 'Fraunces', serif; font-size: 40px; font-weight: 300; letter-spacing: -1.5px; line-height: 1; color: var(--text-primary); transition: color 0.5s; }
-        .p-amount.pending { color: var(--text-label); font-style: italic; }
-        .p-amount.done    { color: var(--green); }
-        .p-state { font-family: 'IBM Plex Mono', monospace; font-size: 10px; margin-top: 8px; letter-spacing: 0.04em; color: var(--text-faint); transition: color 0.4s; }
-        .p-state.locked  { color: var(--indigo-l); }
-        .p-state.success { color: var(--green); }
+        /* Amount row */
+        .uv-amount-row { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; gap: 12px; }
+        .uv-amount { font-family: 'Fraunces', serif; font-size: 40px; font-weight: 300; letter-spacing: -1.5px; color: var(--text-primary); line-height: 1; transition: color 0.5s; }
+        .uv-amount.released { color: var(--green); }
+        .uv-badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 11px; border-radius: 5px; transition: all 0.4s; flex-shrink: 0; }
+        .uv-badge.pending  { color: var(--text-faint); background: rgba(238,238,248,0.03); border: 0.5px solid var(--border); }
+        .uv-badge.locked   { color: var(--indigo-l); background: var(--indigo-dim); border: 0.5px solid rgba(84,72,228,0.2); }
+        .uv-badge.released { color: var(--green); background: var(--green-dim); border: 0.5px solid rgba(43,168,106,0.2); }
 
-        .p-eye { display: flex; align-items: center; gap: 8px; padding: 9px 13px; background: var(--indigo-dim); border: 0.5px solid rgba(84,72,228,0.2); border-radius: var(--r-sm); font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.07em; color: var(--indigo-l); white-space: nowrap; overflow: hidden; }
-        .party-col.recv .p-eye { justify-content: flex-end; }
-        .eye-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--indigo-l); flex-shrink: 0; animation: blink 2.5s ease-in-out infinite; }
+        /* Event log */
+        .uv-log { display: flex; flex-direction: column; }
+        .uv-event { display: flex; align-items: center; gap: 12px; padding: 13px 32px; border-bottom: 0.5px solid var(--border); transition: background 0.3s; }
+        .uv-event:last-child { border-bottom: none; }
+        .uv-event.active { background: rgba(84,72,228,0.03); }
+        .uv-event-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--border-md); transition: all 0.4s; }
+        .uv-event.done   .uv-event-dot { background: var(--green); }
+        .uv-event.active .uv-event-dot { background: var(--indigo-l); animation: uvPulse 1.4s ease-in-out infinite; }
+        .uv-event-text { font-family: 'Figtree', sans-serif; font-size: 12px; color: var(--text-secondary); flex: 1; transition: color 0.3s; min-width: 0; }
+        .uv-event.active .uv-event-text { color: var(--text-primary); font-weight: 500; }
+        .uv-event.done   .uv-event-text { color: var(--text-secondary); }
+        .uv-event-time { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); white-space: nowrap; flex-shrink: 0; }
+        .uv-footer { padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; border-top: 0.5px solid var(--border); flex-wrap: wrap; gap: 8px; }
+        .uv-footer-id { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-faint); letter-spacing: 0.08em; }
+        .uv-footer-note { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--indigo-l); letter-spacing: 0.04em; }
+        @keyframes uvPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.3; transform:scale(0.5); } }
 
-        .vault-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 16px; gap: 14px; position: relative; overflow: hidden; min-width: 0; }
-        .wire-svg { position: absolute; top: 50%; height: 1px; width: 60px; transform: translateY(-50%); overflow: visible; pointer-events: none; }
-        .wire-svg.left  { right: 100%; }
-        .wire-svg.right { left: 100%; }
-        .vault-mid-id { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--indigo-l); letter-spacing: 0.1em; text-align: center; }
+        /* Hide old vault classes */
+        .vault-mobile { display: none !important; }
+        .vault-cols   { display: none !important; }
 
-        .vault-fig { position: relative; width: 120px; height: 120px; min-width: 120px; max-width: 120px; min-height: 120px; max-height: 120px; flex-shrink: 0; }
-        .vault-price-tag { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--surface3); border: 0.5px solid var(--border-md); border-radius: var(--r-sm); padding: 4px 11px; font-family: 'Fraunces', serif; font-size: 16px; font-weight: 300; color: var(--text-primary); letter-spacing: -0.4px; white-space: nowrap; z-index: 2; transition: color 0.5s; }
-        .vault-price-tag.released { color: var(--green); }
-
-        .vault-badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 11px; border-radius: 5px; transition: all 0.4s; white-space: nowrap; }
-        .vb-locked { color: var(--indigo-l); background: var(--indigo-dim); border: 0.5px solid rgba(84,72,228,0.2); }
-        .vb-done   { color: var(--green); background: var(--green-dim); border: 0.5px solid rgba(43,168,106,0.2); }
-        .vault-note { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); text-align: center; line-height: 1.6; }
-
-        .audit { border-top: 0.5px solid var(--border); background: rgba(5,5,8,0.6); border-radius: 0 0 var(--r-2xl) var(--r-2xl); padding: 20px 36px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; width: 100%; }
+                .audit { border-top: 0.5px solid var(--border); background: rgba(5,5,8,0.6); border-radius: 0 0 var(--r-2xl) var(--r-2xl); padding: 20px 36px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; width: 100%; }
         .audit::-webkit-scrollbar { display: none; }
         .audit-item { flex-shrink: 0; padding-right: 32px; margin-right: 32px; border-right: 0.5px solid var(--border); display: flex; flex-direction: column; gap: 3px; opacity: 0; animation: fadeUp 0.3s ease forwards; }
         .audit-item:last-child { border-right: none; padding-right: 0; margin-right: 0; }
@@ -321,10 +341,13 @@ export default function GagaraHome() {
           .hero-right { align-items: flex-start; }
           .hero-stats { gap: 28px; }
           .vault-wrap { padding: 0 16px 80px; }
-          /* Hide the desktop 3-col layout on mobile */
-          .vault-cols { display: none; }
-          /* Show the mobile vault card instead */
-          .vault-mobile { display: flex; flex-direction: column; }
+          .vault-wrap { padding: 0 16px 80px; }
+          .uv-parties { padding: 20px 16px; gap: 8px; }
+          .uv-avatar { width: 36px; height: 36px; min-width: 36px; font-size: 14px; }
+          .uv-amount-row { padding: 16px; }
+          .uv-amount { font-size: 32px; }
+          .uv-event { padding: 12px 16px; }
+          .uv-footer { padding: 10px 16px; }
           .audit { padding: 16px 20px; }
           .section { padding: 64px 24px; }
           .steps-grid { grid-template-columns: 1fr; gap: 0; }
@@ -424,177 +447,96 @@ export default function GagaraHome() {
           </div>
           <div className="vault-card">
 
-            {/* ── MOBILE VAULT — Live transaction card (mobile only) ── */}
-            <div className="vault-mobile">
+            {/* ── UNIFIED VAULT — one design, all screen sizes ── */}
 
-              <div className="vtc-parties">
-                <div className="vtc-party">
-                  <div className="vtc-role">Paying</div>
-                  <div className={`vtc-avatar ${released ? 'done' : funded ? 'funded' : ''}`}>G</div>
-                  <div className="vtc-name">@gaga</div>
-                  <div className="vtc-verified">
+            {/* Two parties */}
+            <div className="uv-parties">
+              <div className="uv-party">
+                <div className={`uv-avatar ${released ? 'done' : funded ? 'active' : ''}`}>G</div>
+                <div className="uv-info">
+                  <div className="uv-role">Paying</div>
+                  <div className="uv-name">@gaga</div>
+                  <div className="uv-verified">
                     <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     Verified
                   </div>
-                </div>
-                <div className="vtc-arrow">
-                  <div className={`vtc-arrow-dot ${released ? 'done' : funded ? 'active' : ''}`} />
-                  <div className="vtc-arrow-line">
-                    <div className={`vtc-arrow-pulse ${funded ? 'active' : ''} ${released ? 'green' : ''}`} />
+                  <div className={`uv-state ${released ? 'done' : funded ? 'active' : ''}`}>
+                    {released ? 'Payment sent' : funded ? 'Money reserved' : 'Waiting'}
                   </div>
-                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{flexShrink:0}}>
-                    <path d="M0 0l4 5 4-5" fill={released ? '#2BA86A' : funded ? '#7268ED' : 'rgba(238,238,248,0.15)'} style={{transition:'fill 0.4s'}}/>
-                  </svg>
-                  <div className="vtc-arrow-line" style={{transform:'scaleY(-1)'}}>
-                    <div className={`vtc-arrow-pulse ${funded ? 'active' : ''} ${released ? 'green' : ''}`} style={{animationDelay:'0.9s'}} />
-                  </div>
-                  <div className={`vtc-arrow-dot ${released ? 'done' : funded ? 'active' : ''}`} />
                 </div>
-                <div className="vtc-party right">
-                  <div className="vtc-role">Receiving</div>
-                  <div className={`vtc-avatar ${released ? 'done' : working ? 'funded' : ''}`} style={{marginLeft:'auto'}}>C</div>
-                  <div className="vtc-name">@client</div>
-                  <div className="vtc-verified">
+              </div>
+
+              {/* Center lock indicator */}
+              <div className="uv-center">
+                <div className="uv-center-line">
+                  <div className={`uv-flow ${funded ? 'active' : ''} ${released ? 'green' : 'indigo'}`} />
+                </div>
+                <div className={`uv-lock-wrap ${released ? 'done' : funded ? 'active' : ''}`}>
+                  {!released ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={funded ? '#7268ED' : 'rgba(238,238,248,0.2)'} strokeWidth="1.5" strokeLinecap="round" style={{transition:'stroke 0.4s'}}>
+                      <rect x="3" y="11" width="18" height="11" rx="2"/>
+                      <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA86A" strokeWidth="1.5" strokeLinecap="round">
+                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                      <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                  )}
+                </div>
+                <div className="uv-center-line">
+                  <div className={`uv-flow ${funded ? 'active' : ''} ${released ? 'green' : 'indigo'}`} style={{animationDelay:'0.8s'}} />
+                </div>
+                <div className="uv-label">Gagara</div>
+              </div>
+
+              <div className="uv-party right">
+                <div className={`uv-avatar ${released ? 'done' : working ? 'active' : ''}`}>C</div>
+                <div className="uv-info">
+                  <div className="uv-role">Receiving</div>
+                  <div className="uv-name">@client</div>
+                  <div className="uv-verified" style={{flexDirection:'row-reverse'}}>
                     <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     Verified
                   </div>
-                </div>
-              </div>
-
-              <div className="vtc-amount-wrap">
-                <div className={`vtc-amount ${released ? 'released' : ''}`}>$800.00</div>
-                <div className={`vtc-badge ${released ? 'released' : funded ? 'locked' : 'pending'}`}>
-                  {released ? 'Released' : funded ? 'Reserved' : 'Pending'}
-                </div>
-              </div>
-
-              <div className="vtc-timeline">
-                {[
-                  { text: 'Agreement created by @gaga',     time: '09:12', done: true,      active: false },
-                  { text: '@client joined',                  time: '09:15', done: true,      active: false },
-                  { text: '$800 reserved — work can start', time: '09:23', done: funded,    active: !funded },
-                  { text: 'Work confirmed complete',         time: '10:44', done: working,   active: funded && !working },
-                  { text: 'Both sides confirmed done',       time: '11:02', done: confirmed, active: working && !confirmed },
-                  { text: '$800 sent to @client',            time: '11:02', done: released,  active: confirmed && !released },
-                ].map((ev, i) => (
-                  <div key={i} className={`vtc-event ${ev.done ? 'done' : ev.active ? 'active' : ''}`}>
-                    <div className="vtc-event-dot" />
-                    <div className="vtc-event-text">{ev.text}</div>
-                    {(ev.done || ev.active) && <div className="vtc-event-time">{ev.time}</div>}
+                  <div className={`uv-state ${released ? 'done' : working ? 'active' : ''}`}>
+                    {released ? 'Payment received' : working ? 'Working' : 'Waiting'}
                   </div>
-                ))}
-              </div>
-
-              <div className="vtc-id">
-                <span>GGR-4829-KXMT</span>
-                <span className="vtc-id-note">Managed by Gagara</span>
-              </div>
-
-            </div>
-
-            {/* ── DESKTOP VAULT (hidden on mobile, shown on desktop) ── */}
-            <div className="vault-cols">
-              <div className="party-col">
-                <div className="p-role">Payer</div>
-                <div className="p-id">
-                  <div className="p-avatar">G</div>
-                  <div>
-                    <div className="p-name">@gaga</div>
-                    <div className="p-verified">
-                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      Verified
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="p-amount-tag">{released ? 'Released' : funded ? 'In vault' : 'Depositing'}</div>
-                  <div className="p-amount">$800.00</div>
-                  <div className={`p-state ${funded ? released ? 'success' : 'locked' : ''}`}>
-                    {released ? 'Payment sent' : funded ? 'Locked. Cannot be taken back.' : 'Sending to vault'}
-                  </div>
-                </div>
-                <div className="p-eye">
-                  <div className="eye-dot" />
-                  {released ? 'Payment complete' : funded ? 'Can see vault balance' : 'Waiting for deposit'}
-                </div>
-              </div>
-
-              <div className="vault-mid">
-                <svg className="wire-svg left" viewBox="0 0 60 1" preserveAspectRatio="none" aria-hidden="true" style={{width:'60px'}}>
-                  <line x1="0" y1="0.5" x2="60" y2="0.5" stroke="rgba(84,72,228,0.18)" strokeWidth="1"/>
-                  {funded && <line x1="0" y1="0.5" x2="60" y2="0.5" stroke="#5448E4" strokeWidth="1.5" className="wire-pulse-anim"/>}
-                </svg>
-                <svg className="wire-svg right" viewBox="0 0 60 1" preserveAspectRatio="none" aria-hidden="true" style={{width:'60px'}}>
-                  <line x1="0" y1="0.5" x2="60" y2="0.5" stroke="rgba(84,72,228,0.18)" strokeWidth="1"/>
-                  {released && <line x1="0" y1="0.5" x2="60" y2="0.5" stroke="#2BA86A" strokeWidth="1.5" className="wire-pulse-anim-r"/>}
-                </svg>
-                <div className="vault-mid-id">GGR-4829-KXMT</div>
-                <div className="vault-fig">
-                  <div className={`vault-price-tag ${released ? 'released' : ''}`}>$800.00</div>
-                  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    style={{width:'120px', height:'120px', display:'block'}}
-                    aria-label="Vault" role="img">
-                    <circle cx="60" cy="60" r="56" fill="none" stroke={released ? 'rgba(43,168,106,0.1)' : 'rgba(84,72,228,0.07)'} strokeWidth="0.5" style={{transition:'stroke 0.6s'}}/>
-                    <rect x="18" y="30" width="84" height="62" rx="8" fill="var(--surface3)" stroke={released ? 'rgba(43,168,106,0.45)' : funded ? 'rgba(84,72,228,0.45)' : 'rgba(238,238,248,0.07)'} strokeWidth="0.75" style={{transition:'stroke 0.5s'}}/>
-                    <rect x="34" y="44" width="52" height="36" rx="5" fill="var(--surface4)" stroke={released ? 'rgba(43,168,106,0.25)' : funded ? 'rgba(84,72,228,0.25)' : 'rgba(238,238,248,0.05)'} strokeWidth="0.5" style={{transition:'stroke 0.5s'}}/>
-                    {([[22,38],[100,38],[22,90],[100,90]] as [number,number][]).map(([cx,cy],i) => (
-                      <circle key={i} cx={cx} cy={cy} r="2.5" fill="var(--surface4)" stroke="rgba(238,238,248,0.05)" strokeWidth="0.5"/>
-                    ))}
-                    <circle cx="60" cy="62" r="12" fill={released ? 'rgba(43,168,106,0.08)' : 'rgba(84,72,228,0.07)'} stroke={released ? '#2BA86A' : '#5448E4'} strokeWidth="0.75" style={{transition:'all 0.5s'}}/>
-                    {!released ? (
-                      <>
-                        <rect x="55.5" y="59" width="9" height="7" rx="1.5" fill={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'} style={{transition:'fill 0.4s'}}/>
-                        <path d="M57.5 59v-3a2.5 2.5 0 015 0v3" stroke={funded ? '#5448E4' : 'rgba(84,72,228,0.3)'} strokeWidth="1.2" strokeLinecap="round" style={{transition:'stroke 0.4s'}}/>
-                      </>
-                    ) : (
-                      <path d="M55.5 62l2.5 2.5L65 57" stroke="#2BA86A" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                    )}
-                    <rect x="57" y="82" width="6" height="8" rx="3" fill="rgba(238,238,248,0.04)" stroke="rgba(238,238,248,0.05)" strokeWidth="0.5"/>
-                    <text x="60" y="108" textAnchor="middle" fill="rgba(84,72,228,0.3)" fontSize="6" fontFamily="IBM Plex Mono, monospace" letterSpacing="2.5">GAGARA</text>
-                  </svg>
-                </div>
-                <div className={`vault-badge ${released ? 'vb-done' : 'vb-locked'}`}>
-                  {released ? 'Released' : funded ? 'Locked' : 'Linked'}
-                </div>
-                <div className="vault-note">Managed by Gagara<br />Both sides must agree</div>
-              </div>
-
-              <div className="party-col recv">
-                <div className="p-role">Receiver</div>
-                <div className="p-id">
-                  <div className="p-avatar">C</div>
-                  <div>
-                    <div className="p-name">@client</div>
-                    <div className="p-verified" style={{justifyContent:'flex-end'}}>
-                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><circle cx="5" cy="5" r="4.5" fill="rgba(43,168,106,0.1)" stroke="#2BA86A" strokeWidth="0.6"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#2BA86A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      Verified
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="p-amount-tag">{released ? 'Received' : funded ? 'Waiting to be released' : 'Not funded yet'}</div>
-                  <div className={`p-amount ${released ? 'done' : 'pending'}`}>{released ? '$800.00' : 'pending'}</div>
-                  <div className={`p-state ${released ? 'success' : ''}`}>
-                    {released ? 'Payment received' : funded ? 'Money is there. Work can begin.' : 'Waiting for deposit'}
-                  </div>
-                </div>
-                <div className="p-eye" style={{justifyContent:'flex-end'}}>
-                  <div className="eye-dot" />
-                  {released ? 'Payment complete' : funded ? 'Can see vault balance' : 'Waiting for deposit'}
                 </div>
               </div>
             </div>
-            {/* end desktop vault-cols */}
 
-            <div className="audit" role="log" aria-live="polite" aria-label="Deal activity">
-              {auditLog.map((item, i) => (
-                <div key={`${i}-${phase}`} className="audit-item" style={{animationDelay:`${i * 0.07}s`}}>
-                  <div className="ai-time">{item.t}</div>
-                  <div className="ai-event">{item.e}</div>
-                  <div className="ai-actor">{item.a}</div>
+            {/* Amount + badge */}
+            <div className="uv-amount-row">
+              <div className={`uv-amount ${released ? 'released' : ''}`}>$800.00</div>
+              <div className={`uv-badge ${released ? 'released' : funded ? 'locked' : 'pending'}`}>
+                {released ? 'Released' : funded ? 'Reserved' : 'Pending'}
+              </div>
+            </div>
+
+            {/* Live event log */}
+            <div className="uv-log">
+              {[
+                { text: 'Agreement created by @gaga',     time: '09:12', done: true,      active: false },
+                { text: '@client joined the agreement',   time: '09:15', done: true,      active: false },
+                { text: '$800 reserved — work can start', time: '09:23', done: funded,    active: !funded },
+                { text: 'Work confirmed complete',        time: '10:44', done: working,   active: funded && !working },
+                { text: 'Both sides confirmed done',      time: '11:02', done: confirmed, active: working && !confirmed },
+                { text: '$800 sent to @client',           time: '11:02', done: released,  active: confirmed && !released },
+              ].map((ev, i) => (
+                <div key={i} className={`uv-event ${ev.done ? 'done' : ev.active ? 'active' : ''}`}>
+                  <div className="uv-event-dot" />
+                  <div className="uv-event-text">{ev.text}</div>
+                  {(ev.done || ev.active) && <div className="uv-event-time">{ev.time}</div>}
                 </div>
               ))}
             </div>
+
+            <div className="uv-footer">
+              <span className="uv-footer-id">GGR-4829-KXMT</span>
+              <span className="uv-footer-note">Both sides must agree before anything moves</span>
+            </div>
+
           </div>
         </div>
       </div>
