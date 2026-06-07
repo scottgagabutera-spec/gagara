@@ -187,13 +187,13 @@ export default function GetStarted() {
             <>
               <div className="eyebrow"><span className="eyebrow-line" />Step 1 of 2</div>
               <div className="panel-title">Who are you on Gagara?</div>
-              <div className="panel-sub">This is permanent and determines your identity verification requirements. Your deal mode is chosen separately each time.</div>
+              <div className="panel-sub">Choose how you will use Gagara. This stays the same across your account. You pick the agreement type each time you create one.</div>
               <div className="type-grid">
                 <button className={`type-card tb ${accountType === 'individual' ? 'selected' : ''}`} onClick={() => setAccountType('individual')}>
                   <div className="type-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
                   <div className="type-body">
                     <div className="type-title">Individual</div>
-                    <div className="type-desc">Freelancers, contractors, personal users, sole traders. Verified with government ID.</div>
+                    <div className="type-desc">For individuals. Freelancers, contractors, personal users and sole traders. Verified with a government ID when you are ready to secure funds.</div>
                   </div>
                   <span className="type-badge">Personal</span>
                 </button>
@@ -201,7 +201,7 @@ export default function GetStarted() {
                   <div className="type-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
                   <div className="type-body">
                     <div className="type-title">Business</div>
-                    <div className="type-desc">Registered companies, startups, agencies, NGOs, SMBs. Verified with company registration.</div>
+                    <div className="type-desc">For organisations. Companies, startups, agencies and NGOs. Verified with your company registration when you are ready to secure funds.</div>
                   </div>
                   <span className="type-badge">Organisation</span>
                 </button>
@@ -242,7 +242,7 @@ export default function GetStarted() {
               </div>
               <div className="kyc-note">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <div className="kyc-note-text">Identity verification is only required when you fund a vault for the first time. Explore freely until then.</div>
+                <div className="kyc-note-text">You can create and explore agreements without any verification. Identity verification is only required when you secure your first agreement with funds.</div>
               </div>
               <div className="panel-foot">
                 <button onClick={() => setStep('type')} style={{background:'none',border:'none',color:'rgba(245,245,247,0.50)',fontSize:'13px',cursor:'pointer',fontFamily:'DM Sans,sans-serif'}}>
@@ -257,7 +257,7 @@ export default function GetStarted() {
               <div className="done-box">
                 <div className="done-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
                 <div className="done-title">Account created</div>
-                <div className="done-desc">Check your email to confirm your address, then go to your dashboard.</div>
+                <div className="done-desc">Check your email to confirm your address. Once confirmed you can create your first agreement.</div>
                 <a href={redirectTo || '/dashboard'} className="btn-dashboard">Go to dashboard</a>
               </div>
             </div>

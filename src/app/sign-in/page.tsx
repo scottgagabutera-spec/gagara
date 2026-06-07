@@ -153,7 +153,7 @@ export default function SignIn() {
               <span className="eyebrow-line" />
             </div>
             <div className="panel-title">Sign in to Gagara</div>
-            <div className="panel-sub">Continue to your vault and active deals</div>
+            <div className="panel-sub">Continue to your dashboard and active agreements</div>
           </div>
 
           <div className="card">
@@ -209,7 +209,7 @@ export default function SignIn() {
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
             <div className="kyc-note-text">
-              You can explore Gagara and create deals freely. Identity verification is only required at the moment you fund a vault.
+              You can explore Gagara and create agreements freely. Identity verification is only required when you secure your first agreement with funds.
             </div>
           </div>
         </div>
