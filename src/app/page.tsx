@@ -339,35 +339,35 @@ export default function GagaraHome() {
       <section className="hero">
         <div className="hero-tag">
           <span className="hero-tag-line" aria-hidden="true" />
-          Both sides are protected. Always.
+          You want to engage. But what if they don't follow through?
         </div>
         <h1 className="hero-h1">
-          The money is there.<br /><em>You can both see it.</em>
+          No more starting and<br /><em>hoping for the best.</em>
         </h1>
         <div className="hero-rule" aria-hidden="true" />
         <div className="hero-body">
           <p className="hero-desc">
-            Before any work starts, the payment is locked in a shared vault.
-            The person doing the work sees it sitting there. The person paying knows exactly where their money is.<br /><br />
-            <strong>Nobody can touch it alone.</strong> It only moves when both of you agree the job is done.
+            Before anyone starts, both sides confirm their commitment through Gagara.
+            The person paying shows the money is real and ready. The person working knows they will be paid the moment the job is done.<br /><br />
+            <strong>No chasing. No excuses. No surprises.</strong> Everyone knows exactly what happens and when.
           </p>
           <div className="hero-right">
             <div className="hero-stats">
               <div>
                 <div className="stat-val">2<span>×</span></div>
-                <div className="stat-label">Protected<br />Payer and receiver both</div>
+                <div className="stat-label">Both sides covered<br />Not just one person</div>
               </div>
               <div>
                 <div className="stat-val"><span>0</span></div>
-                <div className="stat-label">Surprises<br />Every step is visible</div>
+                <div className="stat-label">Surprises<br />Everyone sees every step</div>
               </div>
               <div>
                 <div className="stat-val"><span>∞</span></div>
-                <div className="stat-label">Deal types<br />Any agreement, any size</div>
+                <div className="stat-label">Kinds of agreement<br />Small favour to big contract</div>
               </div>
             </div>
             <div className="hero-actions">
-              <a href="/get-started" className="btn-primary">Start a deal for free</a>
+              <a href="/get-started" className="btn-primary">Create a free agreement</a>
               <a href="#vault" className="btn-link">See how it works</a>
             </div>
           </div>
@@ -378,7 +378,7 @@ export default function GagaraHome() {
       <div className="page-max">
         <div className="vault-wrap" id="vault">
           <div className="vault-meta">
-            <div className="vault-meta-label">The shared vault — live example</div>
+            <div className="vault-meta-label">How your agreement looks — live example</div>
             <div className="vault-deal-id">GGR-4829-KXMT</div>
           </div>
           <div className="vault-card">
@@ -445,7 +445,7 @@ export default function GagaraHome() {
                 <div className={`vault-badge ${released ? 'vb-done' : 'vb-locked'}`}>
                   {released ? 'Released' : funded ? 'Locked' : 'Linked'}
                 </div>
-                <div className="vault-note">Held by Gagara<br />Neither side acts alone</div>
+                <div className="vault-note">Managed by Gagara<br />Both sides must agree</div>
               </div>
 
               <div className="party-col recv">
@@ -493,14 +493,14 @@ export default function GagaraHome() {
       <div className="page-max">
         <section className="section" id="how">
           <div className="sec-tag">How it works</div>
-          <h2 className="sec-h2">Simple steps. <em>No surprises.</em></h2>
-          <p className="sec-desc">Every deal on Gagara follows the same order. Both of you can see every step as it happens. Nothing is hidden, nothing is skipped.</p>
+          <h2 className="sec-h2">Here is exactly <em>what happens.</em></h2>
+          <p className="sec-desc">Every agreement on Gagara works the same way. You both agreed to the same thing before anyone started. Both of you can see every step as it happens. Nothing is hidden.</p>
           <div className="steps-grid">
             {[
-              { n:'01', title:'Agree on the terms',       desc:'One person sets up the deal — the amount, what is expected, and when. They share a short code with the other party.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
-              { n:'02', title:'Payment goes into the vault', desc:'The payer puts the money in. It is locked. The person doing the work can see it sitting there before they start anything.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> },
+              { n:'01', title:'Agree on the terms',       desc:'One person writes up the agreement — the amount, what is expected, and by when. They share a simple code with the other person so both are looking at the same thing.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
+              { n:'02', title:'Payment goes into the vault', desc:'The person paying puts the money in through Gagara. It is reserved and cannot be taken back. The person doing the work can see it is there before they lift a finger.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> },
               { n:'03', title:'Work gets done',             desc:'The job is carried out. Both sides can see progress. If there are milestones, each one is tracked and confirmed separately.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> },
-              { n:'04', title:'Both sides say yes',         desc:'When the work is done, both parties confirm it. One person saying yes is not enough. Both must agree before anything moves.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> },
+              { n:'04', title:'Both sides say yes',         desc:'When the work is done, both of you confirm it. One person saying yes is not enough. Both must agree before the money moves.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> },
               { n:'05', title:'Payment is sent',            desc:'Once both confirm, the money goes straight to the receiver. The full record of the deal stays on file permanently.', icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><polyline points="5 12 12 5 19 12"/><line x1="12" y1="5" x2="12" y2="19"/></svg> },
             ].map((s, i) => {
               const isActive = i === phase;
@@ -524,27 +524,27 @@ export default function GagaraHome() {
       <div className="page-max">
         <section className="section" id="situations">
           <div className="sec-tag">Who it helps</div>
-          <h2 className="sec-h2">Built for the moments <em>trust is not enough.</em></h2>
-          <p className="sec-desc">You do not need to have been burned to use Gagara. But if you have, you know exactly why this exists.</p>
+          <h2 className="sec-h2">For anyone who has ever wondered <em>what if this goes wrong.</em></h2>
+          <p className="sec-desc">You do not need a bad experience to want certainty before you start. Gagara is for anyone taking on work or paying for something where the stakes matter.</p>
           <div className="stories-grid">
             {[
               {
                 n: '01',
-                situation: <>You finished the work.<br /><em>They stopped replying.</em></>,
+                situation: <>You delivered everything.<br /><em>Then the silence started.</em></>,
                 body: 'You delivered everything you agreed on. Now you cannot get paid. With Gagara, the money was already in the vault before you started. You would not have needed to chase anyone.',
-                outcome: 'Get paid when the job is done. Not when they feel like it.',
+                outcome: 'When you finish the work, the payment is already waiting for you.',
               },
               {
                 n: '02',
                 situation: <>You paid for the job.<br /><em>The work never came.</em></>,
                 body: 'You transferred the money upfront and trusted them to deliver. They did not. With Gagara, you stay in control. The money does not leave until you confirm you got what you paid for.',
-                outcome: 'Your money is safe until you say so.',
+                outcome: 'The money does not move until you confirm you got what you paid for.',
               },
               {
                 n: '03',
                 situation: <>You invested weeks of work.<br /><em>They changed their mind.</em></>,
-                body: 'You spent time, materials, and energy on a big job. Then the client pulled out. Gagara locks the commitment on both sides before work begins. If conditions are met, you get paid. No excuses.',
-                outcome: 'Both sides are committed before anyone starts.',
+                body: 'You spent time, materials, and energy preparing for a big job. Then the client changed their mind. With Gagara, both sides commit before anyone starts. If you do what was agreed, the payment is there. That is the whole point.',
+                outcome: 'You start with confidence, not just hope.',
               },
             ].map((s, i) => (
               <div key={i} className="story-card">
@@ -567,13 +567,13 @@ export default function GagaraHome() {
       <div className="page-max">
         <section className="section" id="modes">
           <div className="sec-tag">Deal types</div>
-          <h2 className="sec-h2">Any size. <em>Any kind of agreement.</em></h2>
-          <p className="sec-desc">You choose the deal type each time you create a new agreement. Your account stays the same.</p>
+          <h2 className="sec-h2">A small favour or a big project. <em>Gagara fits both.</em></h2>
+          <p className="sec-desc">Each time you create an agreement, you pick how much protection you need based on the size and importance of the work. Your account stays the same either way.</p>
           <div className="modes-grid">
             {[
-              { n:'01', gold:false, icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.3" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, title:'Personal', desc:'Small jobs, favors with money attached, or anything between individuals who want to do things properly.', range:'Up to $2,000', features:['Single payment on completion','Deal code shared by message','Both sides confirm before release','Full record kept on file'] },
-              { n:'02', gold:false, icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.3" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, title:'Business', desc:'Service contracts, supplier payments, project work split into stages. Built for deals where the details matter.', range:'$200 to $50,000', features:['Pay in milestones as work is delivered','Timeline changes tracked and logged','Full audit trail for both parties','Dispute documentation if needed'] },
-              { n:'03', gold:true,  icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.3" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>, title:'Enterprise', desc:'Large contracts with multiple conditions, multiple parties, and documentation requirements. Built for deals where the stakes are high.', range:'$10,000 and above', features:['Multiple parties in one deal','Court-ready PDF generated automatically','API access for teams','Dedicated support if a dispute arises'] },
+              { n:'01', gold:false, icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.3" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, title:'Personal', desc:'Paying someone to fix something, sending money for a service, or any small agreement between two people. Simple and quick to set up.', range:'Up to $2,000', features:['Single payment on completion','Deal code shared by message','Both sides confirm before release','Full record kept on file'] },
+              { n:'02', gold:false, icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-l)" strokeWidth="1.3" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, title:'Business', desc:'Service agreements, supplier payments, or project work paid in stages as it gets done. Built for situations where the details and the timeline both matter.', range:'$200 to $50,000', features:['Pay in milestones as work is delivered','Timeline changes tracked and logged','Full audit trail for both parties','Dispute documentation if needed'] },
+              { n:'03', gold:true,  icon:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.3" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>, title:'Enterprise', desc:'Large agreements involving multiple people, big amounts, and formal conditions that everyone needs to sign off on. Built for when getting it wrong is not an option.', range:'$10,000 and above', features:['Multiple parties in one deal','Court-ready PDF generated automatically','API access for teams','Dedicated support if a dispute arises'] },
             ].map((m, i) => (
               <div key={i} className={`mode-card ${m.gold ? 'gold-card' : ''}`}>
                 <div className="mc-n">{m.n}</div>
@@ -594,8 +594,8 @@ export default function GagaraHome() {
       <div className="page-max">
         <section className="section" id="payouts">
           <div className="sec-tag">Getting paid</div>
-          <h2 className="sec-h2">Money moves <em>the moment both agree.</em></h2>
-          <p className="sec-desc">Once both parties confirm the work is done, payment goes out immediately. The receiver chooses how they want to be paid before the deal even starts.</p>
+          <h2 className="sec-h2">You get paid <em>the moment it is confirmed done.</em></h2>
+          <p className="sec-desc">Once both of you confirm the work is done, payment goes out straight away. The person receiving the money chooses how they want to be paid before the agreement even begins.</p>
           <div className="payout-table">
             <div className="pt-head"><span>How you get paid</span><span>How fast</span></div>
             {[
@@ -620,15 +620,15 @@ export default function GagaraHome() {
         <div className="closing">
           <div className="closing-box">
             <div className="cb-inner">
-              <div className="cb-tag">Fair for both sides. Always.</div>
-              <h2 className="cb-h">You should not have to<br /><em>just trust and hope.</em></h2>
-              <p className="cb-p">Gagara gives both the person paying and the person working the same thing: certainty. The money is there. The conditions are agreed. When the job is done, everyone gets what they were promised.</p>
+              <div className="cb-tag">Certainty before you start. Every time.</div>
+              <h2 className="cb-h">Start every agreement knowing<br /><em>exactly how it ends.</em></h2>
+              <p className="cb-p">The moment you are not sure whether to say yes — whether to take the job, sign the contract, or trust someone with your money — that is exactly when Gagara helps. Both sides put their commitment down before anyone starts. When the work is done, everyone gets what was agreed.</p>
               <div className="cb-btns">
-                <a href="/get-started" className="btn-primary">Create your first deal</a>
+                <a href="/get-started" className="btn-primary">Create your first agreement</a>
                 <a href="/sign-in" className="btn-ghost">Sign in</a>
               </div>
               <div className="cb-tags">
-                {['Both sides protected','Money visible to both','No one acts alone','Conditions agreed upfront','Full record kept','Dispute documentation','Works across borders','Any currency'].map((tag,i) => (
+                {['Both sides protected','Everyone sees the same thing','No one acts alone','Conditions agreed before you start','Full history saved','Help if something goes wrong','Works across borders','Any currency'].map((tag,i) => (
                   <span key={i} className="cb-tag-item">{tag}</span>
                 ))}
               </div>
@@ -650,10 +650,13 @@ export default function GagaraHome() {
           Gagara
         </div>
         <ul className="f-nav">
-          <li><a href="#vault">The vault</a></li>
-          <li><a href="#how">How it works</a></li>
+          <li><a href="#vault">How it works</a></li>
+          <li><a href="#how">The steps</a></li>
           <li><a href="#situations">Who it helps</a></li>
-          <li><a href="#modes">Deal types</a></li>
+          <li><a href="#modes">Agreement types</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+          <li><a href="/safety">Safety</a></li>
         </ul>
         <div className="f-copy">© 2026 Gagara</div>
       </footer>
