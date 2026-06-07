@@ -551,7 +551,7 @@ export default function GagaraHome() {
                 </div>
               </div>
             </div>
-            </div>{/* end desktop vault-cols wrapper */}
+            {/* end desktop vault-cols */}
 
             <div className="audit" role="log" aria-live="polite" aria-label="Deal activity">
               {auditLog.map((item, i) => (
